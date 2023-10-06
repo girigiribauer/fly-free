@@ -1,0 +1,106 @@
+
+:global(:root) {
+  --color-white: #fff;
+  --color-primary: #0085ff;
+  --color-success: #17c251;
+  --color-caution: #ff5656;
+  --color-mono1: #e9e9e9;
+  --color-mono2: #d6d6d6;
+  --color-mono3: #adadad;
+  --color-mono4: #8b8b8b;
+}
+
+:global(.plasmo-csui-container) {
+  width: 100%;
+}
+
+.header {
+  width: 100%;
+  height: 60px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-mono1);
+  font-family: sans-serif;
+}
+
+.serviceArea {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.buttonsArea {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.optionLink {
+  color: var(--color-primary);
+  font-size: 15px;
+}
+
+/**
+ * override CSS
+ */
+:global(#placeholder) {
+  display: inline-flex !important;
+  gap: 10px !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: sans-serif;
+}
+
+:global(#placeholder:before) {
+  content: 'FlyFree';
+  display: inline-block;
+  color: var(--color-primary);
+  font-weight: bold;
+  font-size: 32px;
+  line-height: 1;
+}
+
+:global(#placeholder:after) {
+  width: 32px;
+  height: 32px;
+  content: '';
+  background: url('data-base64:~/assets/icon.png') no-repeat 50% 50% / contain;
+}
+
+:global(#placeholder > svg) {
+  display: none !important;
+}
+
+/* hide unnecessary UIs */
+:global([data-testid="twc-cc-mask"]),
+:global([aria-expanded][aria-haspopup][aria-label][role="button"]), /* Choose audience */
+:global([role="presentation"]),
+:global([data-testid="gifSearchButton"]),
+:global([data-testid="createPollButton"]),
+:global([data-testid="scheduleOption"]),
+:global([data-testid="geoButton"]),
+:global([data-testid="attachments"] [aria-label][role="group"] [aria-label][role="button"]), /* Edit media, Remove media */
+:global(div:has(> a[href="/compose/tweet/tags"])),
+:global([aria-label]:has(>div>svg path[d="M12 1.75C6.34 1.75 1.75 6.34 1.75 12S6.34 22.25 12 22.25 22.25 17.66 22.25 12 17.66 1.75 12 1.75zm-.25 10.48L10.5 17.5l-2-1.5v-3.5L7.5 9 5.03 7.59c1.42-2.24 3.89-3.75 6.72-3.84L11 6l-2 .5L8.5 9l5 1.5-1.75 1.73zM17 14v-3l-1.5-3 2.88-1.23c1.17 1.42 1.87 3.24 1.87 5.23 0 1.3-.3 2.52-.83 3.61L17 14z"])), /* Everyone can reply */
+:global([data-testid="countdown-circle"]),
+:global([data-testid="countdown-circle"] ~ div) {
+  display: none !important;
+}
+
+:global(span[data-offset-key]) {
+  background-color: inherit !important;
+}

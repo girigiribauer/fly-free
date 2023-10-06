@@ -1,0 +1,134 @@
+:global(:root) {
+  --color-white: #fff;
+  --color-primary: #0085ff;
+  --color-mono1: #e9e9e9;
+  --color-mono2: #d6d6d6;
+  --color-mono3: #adadad;
+  --color-mono4: #8b8b8b;
+}
+
+:global(body) {
+  margin: 0;
+  background: var(--color-white);
+  font-family: sans-serif;
+}
+
+:global(html),
+:global(body),
+:global(#__plasmo) {
+  min-height: 100vh;
+}
+
+.main {
+  width: 100%;
+  min-height: 100vh;
+  padding: 0 20px;
+  border: 20px solid var(--color-mono2);
+  box-sizing: border-box;
+}
+
+.main a {
+  color: var(--color-primary);
+}
+
+.mainTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 40px 0;
+  font-size: 24px;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 40px 0;
+  border-top: 1px solid var(--color-mono1);
+}
+
+.block p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.blockTitle {
+  max-width: 360px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 20px;
+}
+
+.snsIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+}
+
+.blockContent {
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.elementText {
+  margin: 0;
+}
+
+.elementPair {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.elementKey {
+  flex: 0 0 80px;
+  font-size: 16px;
+}
+
+.elementValue {
+  flex: 0 1 100%;
+  position: relative;
+  padding-right: 80px;
+}
+
+.elementValue > input {
+  width: 100%;
+  padding: 2px 4px;
+  border: 1px solid var(--color-mono2);
+  border-radius: 5px;
+}
+
+.elementValue > .updateFeedback {
+  width: 70px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 12px;
+  color: var(--color-primary);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.elementValue > :global(.update) ~ .updateFeedback {
+  display: flex;
+}
+
+.blockElementList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 20px;
+}
+
+.blockElementList > li {
+  font-size: 16px;
+}

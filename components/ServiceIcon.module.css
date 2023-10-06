@@ -1,0 +1,39 @@
+.container {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.snsIcon {
+  width: 40px;
+  height: 40px;
+  display: block;
+  border-radius: 5px;
+}
+.paused > .snsIcon,
+.invalid > .snsIcon {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
+
+.iconNote {
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: -6px -6px 0 0;
+}
+.paused > .iconNote {
+  background: var(--color-mono3);
+}
+.invalid > .iconNote {
+  background: var(--color-caution);
+}
+.success > .iconNote {
+  background: var(--color-success);
+}

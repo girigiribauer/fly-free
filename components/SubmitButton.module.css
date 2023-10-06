@@ -1,0 +1,15 @@
+.submit {
+  min-width: 140px;
+  min-height: 30px;
+  padding: 0 10px;
+  background: var(--color-primary);
+  border: 0;
+  border-radius: 16px;
+  color: var(--color-white);
+  font-size: 15px;
+  font-weight: bold;
+  appearance: none;
+}
+.submit:disabled {
+  opacity: 0.5;
+}

@@ -1,0 +1,66 @@
+.container {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 60px 0;
+  background: var(--color-white);
+  list-style: none;
+  font-family: sans-serif;
+}
+
+.postStatus {
+  width: 180px;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--color-mono1);
+}
+.postStatus:first-child {
+  border-top: 0;
+}
+
+.statusIcon {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  position: relative;
+}
+
+.statusIconImage {
+  width: 40px;
+  height: 40px;
+  display: block;
+  border-radius: 5px;
+}
+
+.postStatusResult {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+}
+
+.postStatusLabel {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.postStatusExternal {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
