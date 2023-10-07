@@ -58,8 +58,7 @@
       }
     ],
     "host_permissions": [
-      "https://twitter.com/*",
-      "https://x.com/*"
+      "<all_urls>"
     ]
   }
 }
