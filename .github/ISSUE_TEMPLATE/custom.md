@@ -7,10 +7,12 @@ assignees: ''
 
 ---
 
-> **Note**
-> Author is learning English now.
-> Please help me learn English together!
-> I would be happy if you could use simple English. Thank you!
+<!--
+**Note**
+Author is learning English now.
+Please help me learn English together!
+I would be happy if you could use simple English. Thank you!
+-->
 
 ## Outline 📝
 
