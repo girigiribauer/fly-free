@@ -11,3 +11,9 @@
   gap: 10px;
   list-style: none;
 }
+
+.container > p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-mono4);
+}

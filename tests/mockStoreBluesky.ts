@@ -1,10 +1,10 @@
-import { type Store } from '~/models/Store'
-import type { ServiceName } from '~models/ServiceName'
+import { type Store } from '~/models/frontend/Store'
+import type { PreferenceBluesky } from '~/models/PreferenceBluesky'
 
-export const createStore = (service: ServiceName): Store => {
+export const createStoreBluesky = (): Store<PreferenceBluesky> => {
   return {
     data: {
-      service,
+      service: 'Bluesky',
       enabled: true,
       paused: false,
       username: 'username',

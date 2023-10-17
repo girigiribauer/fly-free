@@ -2,16 +2,14 @@ import iconTwitter from 'data-base64:~/assets/icon-twitter.svg'
 import twitter from 'twitter-text'
 
 import type { Draft } from '~/models/Draft'
-import type { Post } from '~/models/Post'
-import type { ServiceBackend, ServiceFrontend } from '~/models/Service'
-import { getDataAsync, switchPausing } from '~/models/Service'
-import type { ServicePreference } from '~/models/ServicePreference'
+import { switchPausing, type Service } from '~/models/frontend/Service'
+import type { Store } from '~/models/frontend/Store'
+import type { PreferenceTwitter } from '~/models/PreferenceTwitter'
 import type { ServiceStatus } from '~/models/ServiceStatus'
-import type { Store } from '~/models/Store'
 
 const service = 'Twitter'
 
-export const createTwitterFrontend = (store: Store): ServiceFrontend => ({
+export const createTwitter = (store: Store<PreferenceTwitter>): Service => ({
   service,
   store,
   iconURL: iconTwitter,
@@ -19,21 +17,29 @@ export const createTwitterFrontend = (store: Store): ServiceFrontend => ({
   switchPausing: switchPausing.bind(this, store),
 })
 
-export const createTwitterBackend = (store: Store): ServiceBackend => ({
-  service,
-  store,
-  post: post.bind(this, store),
-  getDataAsync: getDataAsync.bind(this, store),
-})
+const getStatus = (
+  store: Store<PreferenceTwitter>,
+  draft: Draft,
+): ServiceStatus => {
+  if (!store || !store.data) {
+    throw new Error('Store is nothing')
+  }
 
-const getStatus = (store: Store, draft: Draft): ServiceStatus => {
+  if (!store.data.enabled) {
+    return {
+      type: 'Off',
+      service,
+    }
+  }
+
   if (!draft) {
     return {
       type: 'Invalid',
       service,
     }
   }
-  if (store.data && store.data.paused) {
+
+  if (store.data.paused) {
     return {
       type: 'Paused',
       service,
@@ -62,13 +68,4 @@ const getStatus = (store: Store, draft: Draft): ServiceStatus => {
     type: 'Valid',
     service,
   }
-}
-
-const post = async (
-  store: Store,
-  post: Post,
-  preference: ServicePreference,
-): Promise<string> => {
-  // noop
-  return 'https://twitter.com'
 }

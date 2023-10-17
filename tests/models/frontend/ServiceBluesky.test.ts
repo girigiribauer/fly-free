@@ -1,12 +1,12 @@
 import { describe, expect, test } from 'vitest'
 
-import { createBlueskyFrontend } from '~/models/ServiceBluesky'
-import { createStore } from '~/tests/mockStore'
+import { createBluesky } from '~/models/frontend/ServiceBluesky'
+import { createStoreBluesky } from '~/tests/mockStoreBluesky'
 
-describe('createBlueskyFrontend / getStatus', () => {
+describe('createBluesky / getStatus', () => {
   test('Invalid if no draft', () => {
-    const storeBluesky = createStore('Bluesky')
-    const { getStatus } = createBlueskyFrontend(storeBluesky)
+    const storeBluesky = createStoreBluesky()
+    const { getStatus } = createBluesky(storeBluesky)
 
     const expected = {
       type: 'Invalid',
@@ -18,9 +18,9 @@ describe('createBlueskyFrontend / getStatus', () => {
   })
 
   test('Paused if paused is true', () => {
-    const storeBluesky = createStore('Bluesky')
+    const storeBluesky = createStoreBluesky()
     storeBluesky.data = { ...storeBluesky.data, paused: true }
-    const { getStatus } = createBlueskyFrontend(storeBluesky)
+    const { getStatus } = createBluesky(storeBluesky)
 
     const expected = {
       type: 'Paused',
@@ -34,8 +34,8 @@ describe('createBlueskyFrontend / getStatus', () => {
   })
 
   test('Invalid if zero characters and no image', () => {
-    const storeBluesky = createStore('Bluesky')
-    const { getStatus } = createBlueskyFrontend(storeBluesky)
+    const storeBluesky = createStoreBluesky()
+    const { getStatus } = createBluesky(storeBluesky)
 
     const expected = {
       type: 'Invalid',
@@ -47,8 +47,8 @@ describe('createBlueskyFrontend / getStatus', () => {
   })
 
   test('Valid if zero characters and one image', () => {
-    const storeBluesky = createStore('Bluesky')
-    const { getStatus } = createBlueskyFrontend(storeBluesky)
+    const storeBluesky = createStoreBluesky()
+    const { getStatus } = createBluesky(storeBluesky)
 
     const expected = {
       type: 'Valid',
@@ -64,8 +64,8 @@ describe('createBlueskyFrontend / getStatus', () => {
   })
 
   test('Valid if one character and no image', () => {
-    const storeBluesky = createStore('Bluesky')
-    const { getStatus } = createBlueskyFrontend(storeBluesky)
+    const storeBluesky = createStoreBluesky()
+    const { getStatus } = createBluesky(storeBluesky)
 
     const expected = {
       type: 'Valid',
@@ -77,8 +77,8 @@ describe('createBlueskyFrontend / getStatus', () => {
   })
 
   test('Valid if 300 characters and no image', () => {
-    const storeBluesky = createStore('Bluesky')
-    const { getStatus } = createBlueskyFrontend(storeBluesky)
+    const storeBluesky = createStoreBluesky()
+    const { getStatus } = createBluesky(storeBluesky)
 
     const expected = {
       type: 'Valid',
@@ -94,8 +94,8 @@ describe('createBlueskyFrontend / getStatus', () => {
   })
 
   test('Invalid if 301 characters and no image', () => {
-    const storeBluesky = createStore('Bluesky')
-    const { getStatus } = createBlueskyFrontend(storeBluesky)
+    const storeBluesky = createStoreBluesky()
+    const { getStatus } = createBluesky(storeBluesky)
 
     const expected = {
       type: 'Invalid',
@@ -111,8 +111,8 @@ describe('createBlueskyFrontend / getStatus', () => {
   })
 
   test('Valid if 300 multibyte characters and no image', () => {
-    const storeBluesky = createStore('Bluesky')
-    const { getStatus } = createBlueskyFrontend(storeBluesky)
+    const storeBluesky = createStoreBluesky()
+    const { getStatus } = createBluesky(storeBluesky)
 
     const expected = {
       type: 'Valid',
@@ -128,8 +128,8 @@ describe('createBlueskyFrontend / getStatus', () => {
   })
 
   test('Invalid if 301 multibyte characters and no image', () => {
-    const storeBluesky = createStore('Bluesky')
-    const { getStatus } = createBlueskyFrontend(storeBluesky)
+    const storeBluesky = createStoreBluesky()
+    const { getStatus } = createBluesky(storeBluesky)
 
     const expected = {
       type: 'Invalid',
@@ -142,6 +142,65 @@ describe('createBlueskyFrontend / getStatus', () => {
     })
 
     expect(actual).toMatchObject(expected)
+  })
+
+  test('Invalid if username, password is empty string', () => {
+    const storeBluesky = createStoreBluesky()
+    const updatedStoreBluesky = {
+      ...storeBluesky,
+      data: {
+        ...storeBluesky.data,
+        username: '',
+      },
+    }
+    const { getStatus } = createBluesky(updatedStoreBluesky)
+
+    const expected = {
+      type: 'Invalid',
+      service: 'Bluesky',
+    }
+    const actual = getStatus({
+      text: 'test123',
+      imageURLs: [],
+      linkcardURL: null,
+    })
+
+    expect(actual).toMatchObject(expected)
+  })
+
+  test('Off if enabled is false', () => {
+    const storeBluesky = createStoreBluesky()
+    const updatedStoreBluesky = {
+      ...storeBluesky,
+      data: {
+        ...storeBluesky.data,
+        enabled: false,
+      },
+    }
+    const { getStatus } = createBluesky(updatedStoreBluesky)
+
+    const expected = {
+      type: 'Off',
+      service: 'Bluesky',
+    }
+    const actual = getStatus({
+      text: 'test123',
+      imageURLs: [],
+      linkcardURL: null,
+    })
+
+    expect(actual).toMatchObject(expected)
+  })
+
+  test('Throw error if store is nothing', () => {
+    expect(() => {
+      const { getStatus } = createBluesky(undefined)
+      getStatus({
+        text: 'test123',
+        imageURLs: [],
+        linkcardURL: null,
+      })
+    }).toThrowError(new Error('Store is nothing'))
   })
 
   test.todo('case long URL')

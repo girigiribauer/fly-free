@@ -1,16 +1,18 @@
-import { useMemo, type KeyboardEvent } from 'react'
+import type { KeyboardEvent } from 'react'
 
 import { ServiceIcon } from '~/components/ServiceIcon'
 import { ServiceToggle } from '~/components/ServiceToggle'
+import { createStoreBluesky } from '~/models/frontend/StoreBluesky'
+import { createStoreTaittsuu } from '~/models/frontend/StoreTaittsuu'
+import { createStoreTwitter } from '~/models/frontend/StoreTwitter'
 import type { ServiceName } from '~/models/ServiceName'
-import { createStore } from '~/models/Store'
 import style from '~/options.module.css'
 
 const OptionsPage = () => {
   const stores = {
-    Twitter: createStore('Twitter'),
-    Bluesky: createStore('Bluesky'),
-    Taittsuu: createStore('Taittsuu'),
+    Twitter: createStoreTwitter(),
+    Bluesky: createStoreBluesky(),
+    Taittsuu: createStoreTaittsuu(),
   }
 
   const handleUpdate = async (

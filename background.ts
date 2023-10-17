@@ -1,12 +1,12 @@
 import * as Promise from 'bluebird'
 
+import { createBluesky } from '~/models/backend/ServiceBluesky'
+import { createStore } from '~/models/backend/Store'
 import type { Draft } from '~/models/Draft'
 import type { Message } from '~/models/Message'
 import { convertDraft2Post, type Post } from '~/models/Post'
-import { createBlueskyBackend } from '~/models/ServiceBluesky'
+import type { Preference } from '~/models/Preference'
 import type { ServiceName } from '~/models/ServiceName'
-import type { ServicePreference } from '~/models/ServicePreference'
-import { createStoreAsync } from '~/models/Store'
 
 chrome.action.onClicked.addListener(async (tab) => {
   const urlParams = new URLSearchParams({
@@ -34,11 +34,11 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
   await Promise.mapSeries(
     services.filter((s) => s !== 'Twitter'),
     async (service: Exclude<ServiceName, 'Twitter'>) => {
-      const store = await createStoreAsync(service)
-      let post: (post: Post, preference: ServicePreference) => Promise<string>
+      const store = await createStore(service)
+      let post: (post: Post, preference: Preference) => Promise<string>
       switch (service) {
         case 'Bluesky':
-          const { post: postBluesky } = createBlueskyBackend(store)
+          const { post: postBluesky } = createBluesky(store)
           post = postBluesky
           break
         case 'Taittsuu':

@@ -5,27 +5,29 @@ import styleTextServiceIcon from 'data-text:~/components/ServiceIcon.module.css'
 import styleTextSubmitButton from 'data-text:~/components/SubmitButton.module.css'
 import styleTextContent from 'data-text:~/content.module.css'
 import type { PlasmoCSConfig } from 'plasmo'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { EnableServices } from '~/components/EnableServices'
 import { PostResultView } from '~/components/PostResultView'
+import { ReloadButton } from '~/components/ReloadButton'
 import { SubmitButton } from '~/components/SubmitButton'
 import style from '~/content.module.css'
 import { SelectorTweetButton } from '~/definitions'
 import { useReplaceTitle } from '~/hooks/useReplaceTitle'
 import { useScanDraft } from '~/hooks/useScanDraft'
 import type { Draft } from '~/models/Draft'
+import { createBluesky } from '~/models/frontend/ServiceBluesky'
+import { createTwitter } from '~/models/frontend/ServiceTwitter'
+import { createStoreBluesky } from '~/models/frontend/StoreBluesky'
+import { createStoreTwitter } from '~/models/frontend/StoreTwitter'
 import type { Message } from '~/models/Message'
 import type {
   PostStatus,
   PostStatusOutput,
   PostStatusProcess,
 } from '~/models/PostStatus'
-import { createBlueskyFrontend } from '~/models/ServiceBluesky'
 import type { ServiceResult } from '~/models/ServiceResult'
-import { createTwitterFrontend } from '~/models/ServiceTwitter'
-import { createStore, resumeTweeting, suspendTweeting } from '~/models/Store'
-import { ReloadButton } from '~components/ReloadButton'
+import { loadTweetProcess, saveTweetProcess } from '~/models/TweetProcess'
 
 export const getStyle = () => {
   const styleElement = document.createElement('style')
@@ -53,12 +55,12 @@ const Overlay = () => {
     type: 'Initialize',
   })
   const stores = {
-    Twitter: createStore('Twitter'),
-    Bluesky: createStore('Bluesky'),
+    Twitter: createStoreTwitter(),
+    Bluesky: createStoreBluesky(),
   }
   const services = [
-    createTwitterFrontend(stores['Twitter']),
-    createBlueskyFrontend(stores['Bluesky']),
+    createTwitter(stores['Twitter']),
+    createBluesky(stores['Bluesky']),
   ]
 
   const handleSubmit = useCallback(
@@ -130,9 +132,7 @@ const Overlay = () => {
           ) as HTMLDivElement
 
           ;(async () => {
-            // I don't know about Twitter UI behavior...
-            // Suspend => Refresh(or Initialize) => Resume
-            await suspendTweeting(postStatus)
+            await saveTweetProcess({ process: postStatus })
             button.click()
 
             setPostStatus({ type: 'Initialize' })
@@ -171,12 +171,13 @@ const Overlay = () => {
     if (postStatus.type !== 'Initialize') return
 
     void (async () => {
-      const resumedPostStatus = await resumeTweeting()
+      const resumedPostStatus = await loadTweetProcess()
 
       if (resumedPostStatus) {
+        const { process } = resumedPostStatus
         setPostStatus({
           type: 'Output',
-          results: resumedPostStatus.results.map((r) =>
+          results: process.results.map((r) =>
             r.service === 'Twitter'
               ? {
                   type: 'Success',
@@ -209,19 +210,29 @@ const Overlay = () => {
   const isBeforePost =
     postStatus.type === 'Initialize' || postStatus.type === 'Input'
 
+  const enabledServices = useMemo(
+    () =>
+      services.filter((s) => {
+        const status = s.getStatus(draft)
+        return status.type !== 'Off'
+      }),
+    [services, draft],
+  )
+
   return (
     <>
       <div className={style.header}>
         <div className={style.serviceArea}>
           <ReloadButton disabled={!isBeforePost} />
           {isBeforePost ? (
-            <EnableServices services={services} draft={draft} />
+            <EnableServices services={enabledServices} draft={draft} />
           ) : null}
         </div>
 
         <div className={style.buttonsArea}>
           <SubmitButton
             innerRef={submitRef}
+            hasService={enabledServices.length > 0}
             postStatus={postStatus}
             handleSubmit={() => handleSubmit(draft)}
           />
