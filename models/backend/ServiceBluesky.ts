@@ -1,64 +1,21 @@
 import { BskyAgent, ComAtprotoRepoUploadBlob, RichText } from '@atproto/api'
 import type { Record } from '@atproto/api/dist/client/types/app/bsky/feed/post'
 import * as Promise from 'bluebird'
-import iconBluesky from 'data-base64:~assets/icon-bluesky.svg'
 
-import type { Draft } from '~/models/Draft'
+import type { Service } from '~/models/backend/Service'
+import { getDataAsync } from '~/models/backend/Service'
+import type { Store } from '~/models/backend/Store'
 import type { Post, PostImage } from '~/models/Post'
-import type { ServiceBackend, ServiceFrontend } from '~/models/Service'
-import { getDataAsync, switchPausing } from '~/models/Service'
-import type { ServicePreference } from '~/models/ServicePreference'
-import type { ServiceStatus } from '~/models/ServiceStatus'
-import type { Store } from '~/models/Store'
+import type { PreferenceBluesky } from '~/models/PreferenceBluesky'
 
 const service = 'Bluesky'
 
-export const createBlueskyFrontend = (store: Store): ServiceFrontend => ({
-  getStatus: getStatus.bind(this, store),
-  switchPausing: switchPausing.bind(this, store),
-  iconURL: iconBluesky,
-  service,
-  store,
-})
-
-export const createBlueskyBackend = (store: Store): ServiceBackend => ({
+export const createBluesky = (store: Store): Service => ({
   post,
   getDataAsync: getDataAsync.bind(this, store),
   service,
   store,
 })
-
-const getStatus = (store: Store, draft: Draft): ServiceStatus => {
-  if (!draft) {
-    return {
-      type: 'Invalid',
-      service,
-    }
-  }
-  if (store.data && store.data.paused) {
-    return {
-      type: 'Paused',
-      service,
-    }
-  }
-
-  const { text, imageURLs } = draft
-  if ((!text || text.length === 0) && (!imageURLs || imageURLs.length === 0)) {
-    return {
-      type: 'Invalid',
-      service,
-    }
-  }
-  if (text.length > 300) {
-    return { type: 'Invalid', service: 'Bluesky' }
-  }
-  // TODO: case embedded video
-
-  return {
-    type: 'Valid',
-    service,
-  }
-}
 
 const convertBskyAppURL = (uri: string, username: string): string | null => {
   const matched = uri
@@ -72,7 +29,7 @@ const convertBskyAppURL = (uri: string, username: string): string | null => {
 
 const post = async (
   post: Post,
-  preference: ServicePreference,
+  preference: PreferenceBluesky,
 ): Promise<string> => {
   const { text, images, linkcard } = post
   const { username, password } = preference

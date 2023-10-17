@@ -1,12 +1,12 @@
 import { describe, expect, test } from 'vitest'
 
-import { createTwitterFrontend } from '~/models/ServiceTwitter'
-import { createStore } from '~/tests/mockStore'
+import { createTwitter } from '~/models/frontend/ServiceTwitter'
+import { createStoreTwitter } from '~/tests/mockStoreTwitter'
 
-describe('createTwitterFrontend / getStatus', () => {
+describe('createTwitter / getStatus', () => {
   test('Invalid if no draft', () => {
-    const storeTwitter = createStore('Twitter')
-    const { getStatus } = createTwitterFrontend(storeTwitter)
+    const storeTwitter = createStoreTwitter()
+    const { getStatus } = createTwitter(storeTwitter)
 
     const expected = {
       type: 'Invalid',
@@ -18,9 +18,9 @@ describe('createTwitterFrontend / getStatus', () => {
   })
 
   test('Paused if paused is true', () => {
-    const storeTwitter = createStore('Twitter')
+    const storeTwitter = createStoreTwitter()
     storeTwitter.data = { ...storeTwitter.data, paused: true }
-    const { getStatus } = createTwitterFrontend(storeTwitter)
+    const { getStatus } = createTwitter(storeTwitter)
 
     const expected = {
       type: 'Paused',
@@ -31,11 +31,13 @@ describe('createTwitterFrontend / getStatus', () => {
       imageURLs: [],
       linkcardURL: null,
     })
+
+    expect(actual).toMatchObject(expected)
   })
 
   test('Invalid if zero characters and no image', () => {
-    const storeTwitter = createStore('Twitter')
-    const { getStatus } = createTwitterFrontend(storeTwitter)
+    const storeTwitter = createStoreTwitter()
+    const { getStatus } = createTwitter(storeTwitter)
 
     const expected = {
       type: 'Invalid',
@@ -47,8 +49,8 @@ describe('createTwitterFrontend / getStatus', () => {
   })
 
   test('Valid if zero characters and one image', () => {
-    const storeTwitter = createStore('Twitter')
-    const { getStatus } = createTwitterFrontend(storeTwitter)
+    const storeTwitter = createStoreTwitter()
+    const { getStatus } = createTwitter(storeTwitter)
 
     const expected = {
       type: 'Valid',
@@ -64,8 +66,8 @@ describe('createTwitterFrontend / getStatus', () => {
   })
 
   test('Valid if one character and no image', () => {
-    const storeTwitter = createStore('Twitter')
-    const { getStatus } = createTwitterFrontend(storeTwitter)
+    const storeTwitter = createStoreTwitter()
+    const { getStatus } = createTwitter(storeTwitter)
 
     const expected = {
       type: 'Valid',
@@ -77,8 +79,8 @@ describe('createTwitterFrontend / getStatus', () => {
   })
 
   test('Valid if 280 characters and no image', () => {
-    const storeTwitter = createStore('Twitter')
-    const { getStatus } = createTwitterFrontend(storeTwitter)
+    const storeTwitter = createStoreTwitter()
+    const { getStatus } = createTwitter(storeTwitter)
 
     const expected = {
       type: 'Valid',
@@ -94,8 +96,8 @@ describe('createTwitterFrontend / getStatus', () => {
   })
 
   test('Invalid if 281 characters and no image', () => {
-    const storeTwitter = createStore('Twitter')
-    const { getStatus } = createTwitterFrontend(storeTwitter)
+    const storeTwitter = createStoreTwitter()
+    const { getStatus } = createTwitter(storeTwitter)
 
     const expected = {
       type: 'Invalid',
@@ -111,8 +113,8 @@ describe('createTwitterFrontend / getStatus', () => {
   })
 
   test('Invalid if 140 multibyte characters and no image', () => {
-    const storeTwitter = createStore('Twitter')
-    const { getStatus } = createTwitterFrontend(storeTwitter)
+    const storeTwitter = createStoreTwitter()
+    const { getStatus } = createTwitter(storeTwitter)
 
     const expected = {
       type: 'Valid',
@@ -128,8 +130,8 @@ describe('createTwitterFrontend / getStatus', () => {
   })
 
   test('Invalid if 141 multibyte characters and no image', () => {
-    const storeTwitter = createStore('Twitter')
-    const { getStatus } = createTwitterFrontend(storeTwitter)
+    const storeTwitter = createStoreTwitter()
+    const { getStatus } = createTwitter(storeTwitter)
 
     const expected = {
       type: 'Invalid',
@@ -142,6 +144,41 @@ describe('createTwitterFrontend / getStatus', () => {
     })
 
     expect(actual).toMatchObject(expected)
+  })
+
+  test('Off if enabled is false', () => {
+    const storeTwitter = createStoreTwitter()
+    const updatedStoreTwitter = {
+      ...storeTwitter,
+      data: {
+        ...storeTwitter.data,
+        enabled: false,
+      },
+    }
+    const { getStatus } = createTwitter(updatedStoreTwitter)
+
+    const expected = {
+      type: 'Off',
+      service: 'Twitter',
+    }
+    const actual = getStatus({
+      text: 'test123',
+      imageURLs: [],
+      linkcardURL: null,
+    })
+
+    expect(actual).toMatchObject(expected)
+  })
+
+  test('Throw error if store is nothing', () => {
+    expect(() => {
+      const { getStatus } = createTwitter(undefined)
+      getStatus({
+        text: 'test123',
+        imageURLs: [],
+        linkcardURL: null,
+      })
+    }).toThrowError(new Error('Store is nothing'))
   })
 
   test.todo('case long URL')
