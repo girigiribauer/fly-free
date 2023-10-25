@@ -1,11 +1,3 @@
----
-name: Pull request template
-about: pull request template
-title: ''
-labels: ''
-assignees: ''
----
-
 <!--
 **Note**
 Author is learning English now.

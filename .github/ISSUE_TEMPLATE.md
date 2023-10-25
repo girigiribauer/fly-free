@@ -1,12 +1,3 @@
----
-name: Issue template
-about: issue template
-title: ''
-labels: ''
-assignees: ''
-
----
-
 <!--
 **Note**
 Author is learning English now.
