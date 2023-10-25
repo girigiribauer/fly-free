@@ -190,7 +190,9 @@ const OptionsPage = () => {
               </a>
             </li>
             <li>
-              <a href="https://google.com/" target="_blank">
+              <a
+                href="https://chrome.google.com/webstore/detail/flyfree/mjlfkhenobdjdonefhdbpigopndgeogm"
+                target="_blank">
                 Extension Page
               </a>
             </li>
