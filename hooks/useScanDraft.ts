@@ -46,59 +46,69 @@ export const useScanDraft = (handleSubmit: () => void): Draft | null => {
   )
 
   // TODO: beautify...
-  useEffect(() => {
-    window.addEventListener('load', () => {
-      let textarea: HTMLDivElement
-      let attachments: HTMLDivElement
-      let cardWrapper: HTMLDivElement
+  const observeTwitterUI = useCallback(() => {
+    let textarea: HTMLDivElement
+    let attachments: HTMLDivElement
+    let cardWrapper: HTMLDivElement
 
-      textareaObserver = new MutationObserver(
-        callbackDebounced.bind(undefined, () => {
-          if (!textarea) {
-            textarea = document.querySelector(SelectorTextarea)
-            if (textarea) {
-              textarea.onkeydown = handleKeyDown
-            }
+    textareaObserver = new MutationObserver(
+      callbackDebounced.bind(undefined, () => {
+        if (!textarea) {
+          textarea = document.querySelector(SelectorTextarea)
+          if (textarea) {
+            textarea.onkeydown = handleKeyDown
           }
-          attachments = document.querySelector(SelectorAttachments)
-          cardWrapper = document.querySelector(SelectorCardWrapper)
+        }
+        attachments = document.querySelector(SelectorAttachments)
+        cardWrapper = document.querySelector(SelectorCardWrapper)
 
-          if (!textarea) return
+        if (!textarea) return
 
-          const newText = textarea.textContent
-          const newImages = attachments
-            ? Array.from(
-                attachments.querySelectorAll(SelectorDroppedImage),
-                (elem: HTMLImageElement) => elem.src,
-              )
-            : []
+        const newText = textarea.textContent
+        const newImages = attachments
+          ? Array.from(
+              attachments.querySelectorAll(SelectorDroppedImage),
+              (elem: HTMLImageElement) => elem.src,
+            )
+          : []
 
-          let newDomain: string = ''
-          if (cardWrapper) {
-            const domainContainer =
-              cardWrapper.querySelector(SelectorCardDomain)
-            if (!domainContainer) {
-              console.warn('not found domainContainer')
-            }
-
-            newDomain = domainContainer.textContent
+        let newDomain: string = ''
+        if (cardWrapper) {
+          const domainContainer = cardWrapper.querySelector(SelectorCardDomain)
+          if (!domainContainer) {
+            console.warn('not found domainContainer')
           }
 
-          setDraft(createDraft(newText, newImages, newDomain))
-        }),
-      )
-      textareaObserver.observe(document.body, {
-        attributes: true,
-        childList: true,
-        subtree: true,
-        characterData: true,
-      })
+          newDomain = domainContainer.textContent
+        }
+
+        setDraft(createDraft(newText, newImages, newDomain))
+      }),
+    )
+    textareaObserver.observe(document.body, {
+      attributes: true,
+      childList: true,
+      subtree: true,
+      characterData: true,
     })
+  }, [])
 
-    return () => {
-      window.addEventListener('unload', () => {
-        textareaObserver?.disconnect()
-      })
+  const unobserveTwitterUI = useCallback(() => {
+    textareaObserver?.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (document.readyState === 'complete') {
+      observeTwitterUI()
+      return unobserveTwitterUI
+    } else {
+      window.addEventListener('load', observeTwitterUI)
+      window.addEventListener('unload', unobserveTwitterUI)
+
+      return () => {
+        window.removeEventListener('load', observeTwitterUI)
+        window.removeEventListener('unload', unobserveTwitterUI)
+      }
     }
   }, [])
 
