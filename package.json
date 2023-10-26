@@ -1,7 +1,7 @@
 {
   "name": "fly-free",
   "displayName": "FlyFree",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A multpost tool for SNS to Fly Free!",
   "author": "girigiribauer",
   "scripts": {
