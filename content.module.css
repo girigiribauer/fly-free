@@ -86,6 +86,7 @@
 }
 
 /* hide unnecessary UIs */
+:global(header[role="banner"]),
 :global([data-testid="twc-cc-mask"]),
 :global([aria-expanded][aria-haspopup][aria-label][role="button"]), /* Choose audience */
 :global([role="presentation"]),
