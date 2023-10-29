@@ -24,6 +24,7 @@ const base64import = {
 
 export default defineConfig({
   test: {
+    // jest-dom assumes `expect` is defined globally
     globals: true,
     environment: 'happy-dom',
   },
