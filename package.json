@@ -20,11 +20,15 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.1.0",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.0.0",
     "@types/chrome": "0.0.245",
     "@types/node": "20.5.9",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@types/twitter-text": "^3.1.6",
+    "@vitejs/plugin-react": "^4.1.0",
+    "happy-dom": "^12.10.3",
     "prettier": "3.0.3",
     "typescript": "5.2.2",
     "vitest": "^0.34.6"
