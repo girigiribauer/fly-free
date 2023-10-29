@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import style from '~/components/PostResultView.module.css'
 import { ServiceIcon, type ServiceIconType } from '~/components/ServiceIcon'
 import type { PostStatus } from '~/models/PostStatus'
-import type { ServiceFrontend } from '~/models/Service'
+import type { Service as ServiceFrontend } from '~/models/frontend/Service'
 
 export type PostResultViewProps = {
   services: ServiceFrontend[]
