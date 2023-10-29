@@ -3,8 +3,8 @@ import { useMemo } from 'react'
 
 import style from '~/components/PostResultView.module.css'
 import { ServiceIcon, type ServiceIconType } from '~/components/ServiceIcon'
-import type { PostStatus } from '~/models/PostStatus'
 import type { Service as ServiceFrontend } from '~/models/frontend/Service'
+import type { PostStatus } from '~/models/PostStatus'
 
 export type PostResultViewProps = {
   services: ServiceFrontend[]
