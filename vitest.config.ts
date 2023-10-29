@@ -2,18 +2,22 @@ import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
 import path from "path";
-import fs from "fs";
+import fs from "fs/promises";
 
 const base64import = {
   name: "svg-base64-import",
-  transform(_code: string, id: string) {
+  async transform(_code: string, id: string) {
     if (id.endsWith(".svg")) {
       const svgSrc = path.relative(process.cwd(), id);
-      const svgRaw = fs.readFileSync(svgSrc, { encoding: "utf-8" });
-      const value = `data:image/svg+xml,${encodeURIComponent(svgRaw)}`;
-      return {
+      const readPromise = fs.readFile(svgSrc, { encoding: "utf-8" });
+      return readPromise.then((svgRaw) => {
+        const value = `data:image/svg+xml,${encodeURIComponent(svgRaw)}`;
+        return {
           code: `const value = '${value}'; export default value;`,
-      };
+        };
+      });
+    } else {
+        return null;
     }
   },
 };
