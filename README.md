@@ -1,6 +1,6 @@
 # Fly Free
 
-A multpost tool for SNS to Fly Free!
+A multipost tool for SNS to Fly Free!
 
 > **Note**
 > Author is learning English now.
