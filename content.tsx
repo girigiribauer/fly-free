@@ -28,6 +28,7 @@ import type {
 } from '~/models/PostStatus'
 import type { ServiceResult } from '~/models/ServiceResult'
 import { loadTweetProcess, saveTweetProcess } from '~/models/TweetProcess'
+import { LogViewer } from '~components/LogViewer'
 
 export const getStyle = () => {
   const styleElement = document.createElement('style')
@@ -49,6 +50,14 @@ export const config: PlasmoCSConfig = {
 }
 
 const Overlay = () => {
+  const [logs, setLogs] = useState<string[]>([])
+  const log = useCallback(
+    (newLog: string) => {
+      setLogs((prev) => [...prev, `[${new Date().toISOString()}] ${newLog}`])
+    },
+    [logs],
+  )
+
   const submitRef = useRef<HTMLButtonElement>()
 
   const [postStatus, setPostStatus] = useState<PostStatus>({
@@ -99,7 +108,7 @@ const Overlay = () => {
     button.click()
   }
 
-  const draft = useScanDraft(handleSubmitProxy)
+  const draft = useScanDraft(handleSubmitProxy, log)
 
   useReplaceTitle()
 
@@ -170,6 +179,8 @@ const Overlay = () => {
   useEffect(() => {
     if (postStatus.type !== 'Initialize') return
 
+    log(`initial draft ${JSON.stringify(draft)}`)
+
     void (async () => {
       const resumedPostStatus = await loadTweetProcess()
 
@@ -188,6 +199,8 @@ const Overlay = () => {
           ),
         })
       } else if (draft) {
+        log('draft is truthy')
+
         setPostStatus({
           type: 'Input',
           draft,
@@ -199,6 +212,8 @@ const Overlay = () => {
 
   useEffect(() => {
     if (postStatus.type !== 'Input') return
+
+    log(`update draft ${JSON.stringify(draft)}`)
 
     setPostStatus({
       type: 'Input',
@@ -244,6 +259,7 @@ const Overlay = () => {
           </a>
         </div>
       </div>
+      <LogViewer logs={logs} />
       <PostResultView services={services} postStatus={postStatus} />
     </>
   )

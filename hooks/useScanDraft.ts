@@ -26,7 +26,10 @@ const callbackDebounced = (
   }, 200)
 }
 
-export const useScanDraft = (handleSubmit: () => void): Draft | null => {
+export const useScanDraft = (
+  handleSubmit: () => void,
+  log: (newLog: string) => void,
+): Draft | null => {
   let textareaObserver: MutationObserver
   const [draft, setDraft] = useState<Draft | null>(null)
 
@@ -47,6 +50,7 @@ export const useScanDraft = (handleSubmit: () => void): Draft | null => {
 
   // TODO: beautify...
   const observeTwitterUI = useCallback(() => {
+    log('call observeTwitterUI')
     let textarea: HTMLDivElement
     let attachments: HTMLDivElement
     let cardWrapper: HTMLDivElement
@@ -94,18 +98,22 @@ export const useScanDraft = (handleSubmit: () => void): Draft | null => {
   }, [])
 
   const unobserveTwitterUI = useCallback(() => {
+    log('call unobserveTwitterUI')
     textareaObserver?.disconnect()
   }, [])
 
   useEffect(() => {
     if (document.readyState === 'complete') {
+      log('document.readyState === "complete" is truthy')
       observeTwitterUI()
       return unobserveTwitterUI
     } else {
+      log('document.readyState === "complete" is falsy')
       window.addEventListener('load', observeTwitterUI)
       window.addEventListener('unload', unobserveTwitterUI)
 
       return () => {
+        log('call useEffect cleanup')
         window.removeEventListener('load', observeTwitterUI)
         window.removeEventListener('unload', unobserveTwitterUI)
       }
