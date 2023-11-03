@@ -2,7 +2,7 @@
   "name": "fly-free",
   "displayName": "FlyFree",
   "version": "0.2.0",
-  "description": "A multpost tool for SNS to Fly Free!",
+  "description": "A multipost tool for SNS to Fly Free!",
   "author": "girigiribauer",
   "scripts": {
     "dev": "rm -rf build .plasmo && plasmo dev",
