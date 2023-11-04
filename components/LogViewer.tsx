@@ -29,6 +29,7 @@ export const LogViewer = ({ logs }: LogViewerProps) => {
           padding: '1rem',
           boxSizing: 'border-box',
           fontSize: '6px',
+          textWrap: 'wrap',
         }}>
         {logs.join('\n')}
       </pre>

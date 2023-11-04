@@ -53,7 +53,9 @@ const Overlay = () => {
   const [logs, setLogs] = useState<string[]>([])
   const log = useCallback(
     (newLog: string) => {
-      setLogs((prev) => [...prev, `[${new Date().toISOString()}] ${newLog}`])
+      const newMessage = `[${new Date().toISOString()}] ${newLog}`
+      console.log(newMessage)
+      setLogs((prev) => [...prev, newMessage])
     },
     [logs],
   )
@@ -179,8 +181,6 @@ const Overlay = () => {
   useEffect(() => {
     if (postStatus.type !== 'Initialize') return
 
-    log(`initial draft ${JSON.stringify(draft)}`)
-
     void (async () => {
       const resumedPostStatus = await loadTweetProcess()
 
@@ -199,8 +199,6 @@ const Overlay = () => {
           ),
         })
       } else if (draft) {
-        log('draft is truthy')
-
         setPostStatus({
           type: 'Input',
           draft,
@@ -212,8 +210,6 @@ const Overlay = () => {
 
   useEffect(() => {
     if (postStatus.type !== 'Input') return
-
-    log(`update draft ${JSON.stringify(draft)}`)
 
     setPostStatus({
       type: 'Input',

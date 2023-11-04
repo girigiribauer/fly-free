@@ -36,11 +36,13 @@ export const useScanDraft = (
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+        log('submit by keyboard')
         event.preventDefault()
         event.stopPropagation()
         handleSubmit()
       }
       if (event.key === 'Escape') {
+        log('cancel escape event')
         event.preventDefault()
         event.stopPropagation()
       }
@@ -57,17 +59,28 @@ export const useScanDraft = (
 
     textareaObserver = new MutationObserver(
       callbackDebounced.bind(undefined, () => {
+        log(`textarea has ${!!document.querySelector(SelectorTextarea)}`)
+        log(`attachments has ${!!document.querySelector(SelectorAttachments)}`)
+        log(`cardWrapper has ${!!document.querySelector(SelectorCardWrapper)}`)
+
         if (!textarea) {
+          log('not found textarea, and try to get textarea')
           textarea = document.querySelector(SelectorTextarea)
           if (textarea) {
+            log('set keyboard event handler')
             textarea.onkeydown = handleKeyDown
           }
         }
         attachments = document.querySelector(SelectorAttachments)
         cardWrapper = document.querySelector(SelectorCardWrapper)
 
-        if (!textarea) return
+        if (!textarea) {
+          log('not found textarea')
+          return
+        }
 
+        log(`newText(textContent) is "${textarea.textContent}".`)
+        log(`newText(innerText) is "${textarea.innerText}".`)
         const newText = textarea.textContent
         const newImages = attachments
           ? Array.from(
@@ -80,13 +93,18 @@ export const useScanDraft = (
         if (cardWrapper) {
           const domainContainer = cardWrapper.querySelector(SelectorCardDomain)
           if (!domainContainer) {
+            log('not found domainContainer')
             console.warn('not found domainContainer')
           }
 
-          newDomain = domainContainer.textContent
+          const newDomainText = domainContainer.textContent
+          log(`newDomainText is ${newDomainText}`)
+          newDomain = newDomainText
         }
 
-        setDraft(createDraft(newText, newImages, newDomain))
+        const newDraft = createDraft(newText, newImages, newDomain)
+        log(`newDraft is ${JSON.stringify(newDraft)}`)
+        setDraft(newDraft)
       }),
     )
     textareaObserver.observe(document.body, {
@@ -110,12 +128,11 @@ export const useScanDraft = (
     } else {
       log('document.readyState === "complete" is falsy')
       window.addEventListener('load', observeTwitterUI)
-      window.addEventListener('unload', unobserveTwitterUI)
 
       return () => {
         log('call useEffect cleanup')
         window.removeEventListener('load', observeTwitterUI)
-        window.removeEventListener('unload', unobserveTwitterUI)
+        unobserveTwitterUI()
       }
     }
   }, [])
