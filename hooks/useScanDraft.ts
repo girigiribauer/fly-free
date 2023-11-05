@@ -27,6 +27,7 @@ const callbackDebounced = (
 }
 
 export const useScanDraft = (
+  container: HTMLElement | undefined,
   handleSubmit: () => void,
   log: (newLog: string) => void,
 ): Draft | null => {
@@ -107,7 +108,7 @@ export const useScanDraft = (
         setDraft(newDraft)
       }),
     )
-    textareaObserver.observe(document.body, {
+    textareaObserver.observe(container, {
       attributes: true,
       childList: true,
       subtree: true,
@@ -119,6 +120,8 @@ export const useScanDraft = (
     log('call unobserveTwitterUI')
     textareaObserver?.disconnect()
   }, [])
+
+  if (!container) return null
 
   useEffect(() => {
     if (document.readyState === 'complete') {

@@ -110,7 +110,8 @@ const Overlay = () => {
     button.click()
   }
 
-  const draft = useScanDraft(handleSubmitProxy, log)
+  const containerRef = useRef<HTMLElement>(document.body)
+  const draft = useScanDraft(containerRef.current, handleSubmitProxy, log)
 
   useReplaceTitle()
 
