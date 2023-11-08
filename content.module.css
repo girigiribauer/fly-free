@@ -102,6 +102,12 @@
   display: none !important;
 }
 
+/* hide unnecessary UIs (for width >= 688px) */
+:global([data-testid="mask"]),
+:global([data-testid="primaryColumn"]) {
+  display: none !important;
+}
+
 :global(span[data-offset-key]) {
   background-color: inherit !important;
 }

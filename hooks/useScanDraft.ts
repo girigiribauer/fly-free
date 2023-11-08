@@ -9,24 +9,12 @@ import {
 } from '~/definitions'
 import { createDraft } from '~/models/Draft'
 import type { Draft } from '~/models/Draft'
+import { debounce } from '~libs/debounce'
 
-let debounceTimer = null
-
-const callbackDebounced = (
-  callback: (
-    mutationList: MutationRecord[],
-    observer: MutationObserver,
-  ) => void,
-  mutationList: MutationRecord[],
-  observer: MutationObserver,
-) => {
-  clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(() => {
-    callback(mutationList, observer)
-  }, 200)
-}
-
-export const useScanDraft = (handleSubmit: () => void): Draft | null => {
+export const useScanDraft = (
+  container: HTMLElement | undefined,
+  handleSubmit: () => void,
+): Draft | null => {
   let textareaObserver: MutationObserver
   const [draft, setDraft] = useState<Draft | null>(null)
 
@@ -45,72 +33,75 @@ export const useScanDraft = (handleSubmit: () => void): Draft | null => {
     [draft],
   )
 
-  // TODO: beautify...
   const observeTwitterUI = useCallback(() => {
     let textarea: HTMLDivElement
     let attachments: HTMLDivElement
     let cardWrapper: HTMLDivElement
 
-    textareaObserver = new MutationObserver(
-      callbackDebounced.bind(undefined, () => {
-        if (!textarea) {
-          textarea = document.querySelector(SelectorTextarea)
-          if (textarea) {
-            textarea.onkeydown = handleKeyDown
-          }
+    // TODO:
+    // - detectable changes
+    // - be robust to changes
+    // - beautify
+    const callback = () => {
+      if (!textarea) {
+        textarea = document.querySelector(SelectorTextarea)
+        if (textarea) {
+          textarea.onkeydown = handleKeyDown
         }
-        attachments = document.querySelector(SelectorAttachments)
-        cardWrapper = document.querySelector(SelectorCardWrapper)
+      }
+      attachments = document.querySelector(SelectorAttachments)
+      cardWrapper = document.querySelector(SelectorCardWrapper)
 
-        if (!textarea) return
+      if (!textarea) return
 
-        const newText = textarea.textContent
-        const newImages = attachments
-          ? Array.from(
-              attachments.querySelectorAll(SelectorDroppedImage),
-              (elem: HTMLImageElement) => elem.src,
-            )
-          : []
+      const newText = textarea.textContent
+      const newImages = attachments
+        ? Array.from(
+            attachments.querySelectorAll(SelectorDroppedImage),
+            (elem: HTMLImageElement) => elem.src,
+          )
+        : []
 
-        let newDomain: string = ''
-        if (cardWrapper) {
-          const domainContainer = cardWrapper.querySelector(SelectorCardDomain)
-          if (!domainContainer) {
-            console.warn('not found domainContainer')
-          }
-
-          newDomain = domainContainer.textContent
+      let newDomain: string = ''
+      if (cardWrapper) {
+        const domainContainer = cardWrapper.querySelector(SelectorCardDomain)
+        if (!domainContainer) {
+          console.warn('not found domainContainer')
         }
 
-        setDraft(createDraft(newText, newImages, newDomain))
-      }),
-    )
-    textareaObserver.observe(document.body, {
+        newDomain = domainContainer.textContent
+      }
+
+      setDraft(createDraft(newText, newImages, newDomain))
+    }
+
+    textareaObserver = new MutationObserver(debounce(callback))
+    textareaObserver.observe(container, {
       attributes: true,
       childList: true,
       subtree: true,
       characterData: true,
     })
-  }, [])
+  }, [container])
 
   const unobserveTwitterUI = useCallback(() => {
     textareaObserver?.disconnect()
   }, [])
 
   useEffect(() => {
+    if (!container) return
     if (document.readyState === 'complete') {
       observeTwitterUI()
       return unobserveTwitterUI
     } else {
       window.addEventListener('load', observeTwitterUI)
-      window.addEventListener('unload', unobserveTwitterUI)
 
       return () => {
         window.removeEventListener('load', observeTwitterUI)
-        window.removeEventListener('unload', unobserveTwitterUI)
+        unobserveTwitterUI()
       }
     }
-  }, [])
+  }, [container])
 
   return draft
 }

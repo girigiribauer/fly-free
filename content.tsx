@@ -14,6 +14,7 @@ import { SubmitButton } from '~/components/SubmitButton'
 import style from '~/content.module.css'
 import { SelectorTweetButton } from '~/definitions'
 import { useReplaceTitle } from '~/hooks/useReplaceTitle'
+import { useResizeAndReload } from '~/hooks/useResizeAndReload'
 import { useScanDraft } from '~/hooks/useScanDraft'
 import type { Draft } from '~/models/Draft'
 import { createBluesky } from '~/models/frontend/ServiceBluesky'
@@ -99,9 +100,11 @@ const Overlay = () => {
     button.click()
   }
 
-  const draft = useScanDraft(handleSubmitProxy)
+  const containerRef = useRef(document.body)
+  const draft = useScanDraft(containerRef.current, handleSubmitProxy)
 
   useReplaceTitle()
+  useResizeAndReload()
 
   const handleReceiveMessage = useCallback(
     (message: unknown) => {
