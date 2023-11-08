@@ -235,7 +235,9 @@ const Overlay = () => {
         <div className={style.buttonsArea}>
           <SubmitButton
             innerRef={submitRef}
-            hasService={enabledServices.length > 0}
+            enableSubmit={
+              enabledServices.length > 0 && draft && draft.text.length > 0
+            }
             postStatus={postStatus}
             handleSubmit={() => handleSubmit(draft)}
           />

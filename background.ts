@@ -8,14 +8,27 @@ import { convertDraft2Post, type Post } from '~/models/Post'
 import type { Preference } from '~/models/Preference'
 import type { ServiceName } from '~/models/ServiceName'
 
-chrome.action.onClicked.addListener(async (tab) => {
-  const urlParams = new URLSearchParams({
-    text: tab.title,
-    url: tab.url,
-  })
+const TwitterTweetURL = 'https://twitter.com/intent/tweet'
+
+chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
+  const getWindowURL = (
+    origin: string,
+    text: string | undefined,
+    url: string | undefined,
+  ) => {
+    if (!text || !url) return origin
+
+    const urlParams = new URLSearchParams({
+      text,
+      url,
+    })
+    return `${origin}?${urlParams}`
+  }
+
+  const url = getWindowURL(TwitterTweetURL, tab.title, tab.url)
 
   await chrome.windows.create({
-    url: `https://twitter.com/intent/tweet?${urlParams.toString()}`,
+    url,
     type: 'popup',
     width: 600,
     height: 400,
