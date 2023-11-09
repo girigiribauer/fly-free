@@ -5,18 +5,18 @@ import type { PostStatus } from '~/models/PostStatus'
 
 export type SubmitButtonProps = {
   innerRef: Ref<HTMLButtonElement>
-  hasService: boolean
+  enableSubmit: boolean
   postStatus: PostStatus
   handleSubmit: () => void
 }
 
 export const SubmitButton = ({
   innerRef,
-  hasService,
+  enableSubmit,
   postStatus,
   handleSubmit,
 }: SubmitButtonProps) => {
-  const disabled = postStatus.type !== 'Input' || !hasService
+  const disabled = postStatus.type !== 'Input' || !enableSubmit
   const label = useMemo(() => {
     switch (postStatus.type) {
       case 'Initialize':
