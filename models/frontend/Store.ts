@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import type { Preference } from '~/models/Preference'
 import { loadPreference, savePreference } from '~/models/Preference'
@@ -12,7 +12,10 @@ export interface Store<T extends Preference> {
 export const createStore = (service: ServiceName): Store<Preference> => {
   const [data, setData] = useState<Preference | null>(null)
 
-  const update = savePreference.bind(this, service)
+  const update = useCallback(
+    (newData) => savePreference(service, newData),
+    [savePreference],
+  )
 
   useEffect(() => {
     if (!!data) return
