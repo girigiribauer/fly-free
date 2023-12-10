@@ -54,7 +54,9 @@ export const useScanDraft = (
 
       if (!textarea) return
 
-      const newText = textarea.textContent
+      const newText = [...textarea.querySelectorAll('[data-block="true"]')]
+        .map((b) => b.textContent)
+        .join('\n')
       const newImages = attachments
         ? Array.from(
             attachments.querySelectorAll(SelectorDroppedImage),
