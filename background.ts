@@ -1,12 +1,12 @@
 import * as Promise from 'bluebird'
 
-import { createBluesky } from '~/models/backend/ServiceBluesky'
-import { createStore } from '~/models/backend/Store'
 import type { Draft } from '~/models/Draft'
-import type { Message } from '~/models/Message'
 import { convertDraft2Post, type Post } from '~/models/Post'
 import type { Preference } from '~/models/Preference'
-import type { ServiceName } from '~/models/ServiceName'
+import type { ProcessMessage } from '~/models/ProcessMessage'
+import { load } from '~/models/Store'
+import { post as postBluesky } from '~/services/Bluesky'
+import type { PostMessageState } from '~models/PostMessageState'
 
 const TwitterTweetURL = 'https://twitter.com/intent/tweet'
 
@@ -36,22 +36,22 @@ chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
 })
 
 chrome.runtime.onMessage.addListener(async (request, sender) => {
-  const receivedMessage = request as Message
+  const receivedMessage = request as ProcessMessage
   if (!receivedMessage || receivedMessage.type !== 'Post') return
 
-  const { draft, services } = receivedMessage
+  const { draft, recipients } = receivedMessage
   const tabID = sender.tab.id
   const draftObj: Draft = JSON.parse(draft)
   const postData = await convertDraft2Post(draftObj)
+  const pref = await load()
 
   await Promise.mapSeries(
-    services.filter((s) => s !== 'Twitter'),
-    async (service: Exclude<ServiceName, 'Twitter'>) => {
-      const store = await createStore(service)
-      let post: (post: Post, preference: Preference) => Promise<string>
-      switch (service) {
+    recipients.filter(({ recipient }) => recipient !== 'Twitter'),
+    async ({ recipient }: PostMessageState) => {
+      let post: (post: Post, pref: Preference) => Promise<string>
+
+      switch (recipient) {
         case 'Bluesky':
-          const { post: postBluesky } = createBluesky(store)
           post = postBluesky
           break
         case 'Taittsuu':
@@ -59,23 +59,23 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
           throw new Error('unimplemented')
       }
 
-      const result: string | Error = await post(postData, store.data).catch(
+      const result: string | Error = await post(postData, pref).catch(
         (error: Error) => {
           return error
         },
       )
 
-      let message: Message
+      let message: ProcessMessage
       if (result instanceof Error) {
         message = {
           type: 'Error',
-          service,
-          message: result.message,
+          recipient,
+          error: result.message,
         }
       } else {
         message = {
           type: 'Success',
-          service,
+          recipient,
           url: result,
         }
       }
@@ -83,8 +83,8 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
     },
   )
 
-  if (services.some((s) => s === 'Twitter')) {
-    const twitterMessage: Message = {
+  if (recipients.some(({ recipient }) => recipient === 'Twitter')) {
+    const twitterMessage: ProcessMessage = {
       type: 'Tweet',
     }
     await chrome.tabs.sendMessage(tabID, twitterMessage)

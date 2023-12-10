@@ -7,9 +7,9 @@ import {
   SelectorDroppedImage,
   SelectorTextarea,
 } from '~/definitions'
+import { debounce } from '~/libs/debounce'
 import { createDraft } from '~/models/Draft'
 import type { Draft } from '~/models/Draft'
-import { debounce } from '~libs/debounce'
 
 export const useScanDraft = (
   container: HTMLElement | undefined,

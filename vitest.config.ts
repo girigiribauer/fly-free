@@ -7,4 +7,7 @@ export default defineConfig({
       '~/': `${__dirname}/`,
     },
   },
+  test: {
+    setupFiles: './vitest.init.ts',
+  },
 })

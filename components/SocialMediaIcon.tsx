@@ -1,20 +1,33 @@
+import iconBluesky from 'data-base64:~/assets/icon-bluesky.svg'
 import iconCaution from 'data-base64:~/assets/icon-caution.svg'
 import iconPause from 'data-base64:~/assets/icon-paused.svg'
 import iconSuccess from 'data-base64:~/assets/icon-success.svg'
+import iconTaittsuu from 'data-base64:~/assets/icon-taittsuu.svg'
+import iconTwitter from 'data-base64:~/assets/icon-twitter.svg'
 
-import style from '~/components/ServiceIcon.module.css'
-import type { ServiceName } from '~/models/ServiceName'
+import style from '~/components/SocialMediaIcon.module.css'
+import type { SocialMedia } from '~/models/SocialMedia'
 
-export type ServiceIconType = 'Valid' | 'Paused' | 'Invalid' | 'Success'
+export type SocialMediaIconType =
+  | 'Initial'
+  | 'Valid'
+  | 'Paused'
+  | 'Invalid'
+  | 'Success'
 
-export type ServiceIconProps = {
-  type: ServiceIconType
-  service: ServiceName
-  iconURL: string
+export type SocialMediaIconProps = {
+  type: SocialMediaIconType
+  media: SocialMedia
 }
 
-export const ServiceIcon = ({ service, type, iconURL }: ServiceIconProps) => {
-  const statusClasses: { [T in ServiceIconType]: string } = {
+export const SocialMediaIcon = ({ media, type }: SocialMediaIconProps) => {
+  const iconURLs: { [key in SocialMedia]: string } = {
+    Twitter: iconTwitter,
+    Bluesky: iconBluesky,
+    Taittsuu: iconTaittsuu,
+  }
+  const statusClasses: { [key in SocialMediaIconType]: string } = {
+    Initial: style.initial,
     Valid: style.valid,
     Paused: style.paused,
     Invalid: style.invalid,
@@ -25,9 +38,9 @@ export const ServiceIcon = ({ service, type, iconURL }: ServiceIconProps) => {
   return (
     <div className={classNames.join(' ')}>
       <img
-        src={iconURL}
-        className={style.snsIcon}
-        alt={service}
+        src={iconURLs[media]}
+        className={style.icon}
+        alt={media}
         width="40"
         height="40"
       />

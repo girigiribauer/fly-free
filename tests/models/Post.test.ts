@@ -2,8 +2,7 @@ import { describe, expect, test } from 'vitest'
 
 import type { Draft } from '~/models/Draft'
 import { convertDraft2Post, type Post } from '~/models/Post'
-
-import { ogpSiteImage } from './PostSampleImage'
+import { ogpSiteImage } from '~/tests/models/PostSampleImage'
 
 describe('convertDraft2Post', () => {
   test('Convert directly in case regular text', async () => {
@@ -20,7 +19,7 @@ describe('convertDraft2Post', () => {
     }
     const actual = await convertDraft2Post(draft)
 
-    expect(actual).toMatchObject(expected)
+    expect(actual).toStrictEqual(expected)
   })
 
   test('Return with link card URL in case "https://ogp.me/" text', async () => {
@@ -47,12 +46,12 @@ describe('convertDraft2Post', () => {
     }
     const actual = await convertDraft2Post(draft)
 
-    expect(actual.text).toMatchObject(expected.text)
-    expect(actual.images).toMatchObject(expected.images)
-    expect(actual.linkcard.url).toMatchObject(expected.linkcard.url)
-    expect(actual.linkcard.thumbnail).toMatchObject(expected.linkcard.thumbnail)
-    expect(actual.linkcard.title).toMatchObject(expected.linkcard.title)
-    expect(actual.linkcard.description).toMatchObject(
+    expect(actual.text).toStrictEqual(expected.text)
+    expect(actual.images).toStrictEqual(expected.images)
+    expect(actual.linkcard.url).toStrictEqual(expected.linkcard.url)
+    expect(actual.linkcard.thumbnail).toStrictEqual(expected.linkcard.thumbnail)
+    expect(actual.linkcard.title).toStrictEqual(expected.linkcard.title)
+    expect(actual.linkcard.description).toStrictEqual(
       expected.linkcard.description,
     )
   })

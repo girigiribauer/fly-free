@@ -17,7 +17,7 @@
   font-family: sans-serif;
 }
 
-.postStatus {
+.recipient {
   width: 180px;
   padding: 10px 0;
   display: flex;
@@ -26,25 +26,11 @@
   gap: 10px;
   border-top: 1px solid var(--color-mono1);
 }
-.postStatus:first-child {
+.recipient:first-child {
   border-top: 0;
 }
 
-.statusIcon {
-  flex: 0 0 40px;
-  width: 40px;
-  height: 40px;
-  position: relative;
-}
-
-.statusIconImage {
-  width: 40px;
-  height: 40px;
-  display: block;
-  border-radius: 5px;
-}
-
-.postStatusResult {
+.recipientResult {
   flex: 1 1 auto;
   display: flex;
   flex-direction: row;
@@ -53,13 +39,13 @@
   text-decoration: none;
 }
 
-.postStatusLabel {
+.recipientLabel {
   font-size: 20px;
   font-weight: bold;
   color: var(--color-primary);
 }
 
-.postStatusExternal {
+.recipientExternalIcon {
   width: 16px;
   height: 16px;
   display: block;

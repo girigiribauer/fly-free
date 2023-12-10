@@ -1,14 +1,14 @@
-import styleTextEnableServices from 'data-text:~/components/EnableServices.module.css'
-import styleTextPostResultView from 'data-text:~/components/PostResultView.module.css'
+import styleTextDeliveryView from 'data-text:~/components/DeliveryView.module.css'
+import styleTextRecipientList from 'data-text:~/components/RecipientList.module.css'
 import styleTextReloadButton from 'data-text:~/components/ReloadButton.module.css'
-import styleTextServiceIcon from 'data-text:~/components/ServiceIcon.module.css'
+import styleTextSocialMediaIcon from 'data-text:~/components/SocialMediaIcon.module.css'
 import styleTextSubmitButton from 'data-text:~/components/SubmitButton.module.css'
 import styleTextContent from 'data-text:~/content.module.css'
 import type { PlasmoCSConfig } from 'plasmo'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { EnableServices } from '~/components/EnableServices'
-import { PostResultView } from '~/components/PostResultView'
+import { DeliveryView } from '~/components/DeliveryView'
+import { RecipientList } from '~/components/RecipientList'
 import { ReloadButton } from '~/components/ReloadButton'
 import { SubmitButton } from '~/components/SubmitButton'
 import style from '~/content.module.css'
@@ -16,28 +16,28 @@ import { SelectorTweetButton } from '~/definitions'
 import { useReplaceTitle } from '~/hooks/useReplaceTitle'
 import { useResizeAndReload } from '~/hooks/useResizeAndReload'
 import { useScanDraft } from '~/hooks/useScanDraft'
-import type { Draft } from '~/models/Draft'
-import { createBluesky } from '~/models/frontend/ServiceBluesky'
-import { createTwitter } from '~/models/frontend/ServiceTwitter'
-import { createStoreBluesky } from '~/models/frontend/StoreBluesky'
-import { createStoreTwitter } from '~/models/frontend/StoreTwitter'
-import type { Message } from '~/models/Message'
+import { useStore } from '~/hooks/useStore'
 import type {
-  PostStatus,
-  PostStatusOutput,
-  PostStatusProcess,
-} from '~/models/PostStatus'
-import type { ServiceResult } from '~/models/ServiceResult'
-import { loadTweetProcess, saveTweetProcess } from '~/models/TweetProcess'
+  DeliveryAgentState,
+  DeliveryAgentStateDelivered,
+  DeliveryAgentStateOnDelivery,
+} from '~/models/DeliveryAgentState'
+import type { Draft } from '~/models/Draft'
+import type { PostMessageState } from '~/models/PostMessageState'
+import type { ProcessMessage } from '~/models/ProcessMessage'
+import type { SocialMedia } from '~/models/SocialMedia'
+import { backupDelivery, restoreDelivery, updateStore } from '~/models/Store'
+import { checkValidation as checkValidationBluesky } from '~/services/Bluesky'
+import { checkValidation as checkValidationTwitter } from '~/services/Twitter'
 
 export const getStyle = () => {
   const styleElement = document.createElement('style')
   const textContent = [
     styleTextContent, // for content.tsx
-    styleTextEnableServices, // for EnableServices.tsx
-    styleTextPostResultView, // for PostResultView.tsx
+    styleTextRecipientList, // for RecipientList.tsx
+    styleTextDeliveryView, // for DeliveryView.tsx
     styleTextReloadButton, // for ReloadButton.tsx
-    styleTextServiceIcon, // for ServiceIcon.tsx
+    styleTextSocialMediaIcon, // for SocialMediaIcon.tsx
     styleTextSubmitButton, // for SubmitButton.tsx
   ].join('\n')
   styleElement.textContent = textContent
@@ -52,43 +52,57 @@ export const config: PlasmoCSConfig = {
 const Overlay = () => {
   const submitRef = useRef<HTMLButtonElement>()
 
-  const [postStatus, setPostStatus] = useState<PostStatus>({
-    type: 'Initialize',
+  const [delivery, setDelivery] = useState<DeliveryAgentState>({
+    type: 'Initial',
   })
-  const stores = {
-    Twitter: createStoreTwitter(),
-    Bluesky: createStoreBluesky(),
-  }
-  const services = [
-    createTwitter(stores['Twitter']),
-    createBluesky(stores['Bluesky']),
-  ]
+  const pref = useStore()
+
+  const handleSwitch = useCallback(
+    async (media: SocialMedia, paused: boolean) => {
+      let key: string | null = null
+      switch (media) {
+        case 'Twitter':
+          key = `twitterPaused`
+          break
+        case 'Bluesky':
+          key = `blueskyPaused`
+          break
+      }
+      if (!key) return
+
+      await updateStore({ [key]: paused })
+    },
+    [],
+  )
 
   const handleSubmit = useCallback(
     (draft: Draft) => {
       if (!draft) return
-      if (postStatus.type !== 'Input') return
+      if (delivery.type !== 'Writing') return
 
-      const targetServices = postStatus.statuses
-        .filter((s) => s.type !== 'Paused')
-        .map((s) => s.service)
-
-      setPostStatus(() => {
-        const results = targetServices.map<ServiceResult>((service) => ({
+      const validRecipients = delivery.recipients
+        .filter(
+          (r) =>
+            r.type === 'Writing' &&
+            r.postValidate.type === 'Valid' &&
+            r.enabled &&
+            !r.paused,
+        )
+        .map<PostMessageState>((r) => ({
           type: 'Posting',
-          service,
+          recipient: r.recipient,
         }))
-        return { type: 'Process', results }
-      })
 
-      const message: Message = {
+      setDelivery({ type: 'OnDelivery', recipients: validRecipients })
+
+      const message: ProcessMessage = {
         type: 'Post',
         draft: JSON.stringify(draft),
-        services: targetServices,
+        recipients: validRecipients,
       }
       chrome.runtime.sendMessage(message)
     },
-    [postStatus],
+    [delivery],
   )
 
   const handleSubmitProxy = () => {
@@ -103,29 +117,74 @@ const Overlay = () => {
   const containerRef = useRef(document.body)
   const draft = useScanDraft(containerRef.current, handleSubmitProxy)
 
+  const recipients: PostMessageState[] = useMemo(() => {
+    const socialMedia: SocialMedia[] = ['Twitter', 'Bluesky']
+
+    if (delivery.type === 'Initial') {
+      return socialMedia.map<PostMessageState>((recipient) => ({
+        type: 'Initial',
+        recipient,
+      }))
+    }
+
+    return [
+      {
+        type: 'Writing',
+        recipient: 'Twitter',
+        enabled: pref.twitterEnabled,
+        paused: pref.twitterPaused,
+        postValidate: checkValidationTwitter(draft, pref),
+      },
+      {
+        type: 'Writing',
+        recipient: 'Bluesky',
+        enabled: pref.blueskyEnabled,
+        paused: pref.blueskyPaused,
+        postValidate: checkValidationBluesky(draft, pref),
+      },
+    ]
+  }, [delivery, pref])
+
+  const validRecipients: SocialMedia[] = useMemo(
+    () =>
+      recipients
+        .filter(
+          (r) =>
+            r.type === 'Writing' &&
+            r.postValidate.type === 'Valid' &&
+            r.enabled &&
+            !r.paused,
+        )
+        .map((r) => r.recipient),
+    [recipients],
+  )
+
   useReplaceTitle()
   useResizeAndReload()
 
   const handleReceiveMessage = useCallback(
     (message: unknown) => {
-      if (postStatus.type !== 'Process') return
+      if (delivery.type !== 'OnDelivery') return
 
-      const receivedMessage = message as Message
+      const receivedMessage = message as ProcessMessage
 
-      let newPostStatus: PostStatusProcess | PostStatusOutput
+      let newDeliveryAgent:
+        | DeliveryAgentStateOnDelivery
+        | DeliveryAgentStateDelivered
+
       switch (receivedMessage.type) {
         case 'Success':
         case 'Error':
-          const results = postStatus.results.map((s) => {
-            if (s.service === receivedMessage.service) {
-              return receivedMessage as ServiceResult
+          const recipients = delivery.recipients.map((r) => {
+            if (r.recipient === receivedMessage.recipient) {
+              return receivedMessage as PostMessageState
             }
-            return s
+            return r
           })
 
-          newPostStatus = {
-            type: 'Process',
-            results,
+          newDeliveryAgent = {
+            type: 'OnDelivery',
+            recipients,
           }
           break
 
@@ -135,10 +194,10 @@ const Overlay = () => {
           ) as HTMLDivElement
 
           ;(async () => {
-            await saveTweetProcess({ process: postStatus })
+            await backupDelivery(delivery)
             button.click()
 
-            setPostStatus({ type: 'Initialize' })
+            setDelivery({ type: 'Initial' })
             return
           })()
           break
@@ -148,97 +207,89 @@ const Overlay = () => {
           return
       }
 
-      const allPosted = !newPostStatus.results.some((a) => a.type === 'Posting')
+      const allPosted = !newDeliveryAgent.recipients.some(
+        (a) => a.type === 'Posting',
+      )
       if (allPosted) {
-        newPostStatus = {
-          ...newPostStatus,
-          type: 'Output',
+        newDeliveryAgent = {
+          ...newDeliveryAgent,
+          type: 'Delivered',
         }
       }
-      setPostStatus(newPostStatus)
+      setDelivery(newDeliveryAgent)
     },
-    [postStatus],
+    [delivery],
   )
 
-  // TODO: brushup...
-
+  // TODO: improvement
   useEffect(() => {
     chrome.runtime.onMessage.addListener(handleReceiveMessage)
 
     return () => {
       chrome.runtime.onMessage.removeListener(handleReceiveMessage)
     }
-  }, [postStatus])
+  }, [delivery])
 
+  // TODO: improvement
   useEffect(() => {
-    if (postStatus.type !== 'Initialize') return
+    if (delivery.type !== 'Initial') return
 
     void (async () => {
-      const resumedPostStatus = await loadTweetProcess()
+      const restored = await restoreDelivery()
 
-      if (resumedPostStatus) {
-        const { process } = resumedPostStatus
-        setPostStatus({
-          type: 'Output',
-          results: process.results.map((r) =>
-            r.service === 'Twitter'
+      if (restored) {
+        setDelivery({
+          type: 'Delivered',
+          recipients: restored.recipients.map((r) =>
+            r.recipient === 'Twitter'
               ? {
                   type: 'Success',
-                  service: 'Twitter',
+                  recipient: 'Twitter',
                   url: 'https://twitter.com', // cannot post URL
                 }
               : r,
           ),
         })
       } else if (draft) {
-        setPostStatus({
-          type: 'Input',
-          draft,
-          statuses: services.map((s) => s.getStatus(draft)),
+        setDelivery({
+          type: 'Writing',
+          recipients,
         })
       }
     })()
-  }, [postStatus, draft])
+  }, [draft])
 
+  // TODO: improvement
   useEffect(() => {
-    if (postStatus.type !== 'Input') return
+    if (delivery.type !== 'Writing') return
 
-    setPostStatus({
-      type: 'Input',
-      draft,
-      statuses: services.map((s) => s.getStatus(draft)),
+    setDelivery({
+      type: 'Writing',
+      recipients,
     })
   }, [draft])
 
   const isBeforePost =
-    postStatus.type === 'Initialize' || postStatus.type === 'Input'
-
-  const enabledServices = useMemo(
-    () =>
-      services.filter((s) => {
-        const status = s.getStatus(draft)
-        return status.type !== 'Off'
-      }),
-    [services, draft],
-  )
+    delivery.type === 'Initial' || delivery.type === 'Writing'
 
   return (
     <>
       <div className={style.header}>
-        <div className={style.serviceArea}>
+        <div className={style.recipientsArea}>
           <ReloadButton disabled={!isBeforePost} />
           {isBeforePost ? (
-            <EnableServices services={enabledServices} draft={draft} />
+            <RecipientList
+              recipients={recipients}
+              handleSwitch={handleSwitch}
+            />
           ) : null}
         </div>
 
         <div className={style.buttonsArea}>
           <SubmitButton
             innerRef={submitRef}
-            enableSubmit={
-              enabledServices.length > 0 && draft && draft.text.length > 0
-            }
-            postStatus={postStatus}
+            delivery={delivery}
+            validRecipients={validRecipients}
             handleSubmit={() => handleSubmit(draft)}
           />
           <a
@@ -249,7 +300,7 @@ const Overlay = () => {
           </a>
         </div>
       </div>
-      <PostResultView services={services} postStatus={postStatus} />
+      <DeliveryView delivery={delivery} />
     </>
   )
 }

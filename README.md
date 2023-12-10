@@ -1,6 +1,6 @@
 # Fly Free
 
-A multipost tool for SNS to Fly Free!
+A crosspost tool for SNS to Fly Free!
 
 > **Note**
 > Author is learning English now.
@@ -11,11 +11,11 @@ A multipost tool for SNS to Fly Free!
 
 ## Concept
 
-![Step 1 You can multipost on Twitter with Bluesky at no cost. / Step 2 Start increasing Bluesky posts...! / Step 3 Switch your timeline from Twitter to Bluesky! / Step 4 Fly Free!](readme-resources/feature.jpg)
+![Step 1 You can crosspost on Twitter with Bluesky at no cost. / Step 2 Start increasing Bluesky posts...! / Step 3 Switch your timeline from Twitter to Bluesky! / Step 4 Fly Free!](readme-resources/feature.jpg)
 
 ### Features
 
-- Multipost
+- crosspost (multipost)
   - Twitter
   - Bluesky
   - other SNS (soon!)

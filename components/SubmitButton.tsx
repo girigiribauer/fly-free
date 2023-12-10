@@ -1,33 +1,35 @@
 import { useMemo, type Ref } from 'react'
 
 import style from '~/components/SubmitButton.module.css'
-import type { PostStatus } from '~/models/PostStatus'
+import type { DeliveryAgentState } from '~/models/DeliveryAgentState'
+import type { SocialMedia } from '~/models/SocialMedia'
 
 export type SubmitButtonProps = {
   innerRef: Ref<HTMLButtonElement>
-  enableSubmit: boolean
-  postStatus: PostStatus
+  delivery: DeliveryAgentState
+  validRecipients: SocialMedia[]
   handleSubmit: () => void
 }
 
 export const SubmitButton = ({
   innerRef,
-  enableSubmit,
-  postStatus,
+  delivery,
+  validRecipients,
   handleSubmit,
 }: SubmitButtonProps) => {
-  const disabled = postStatus.type !== 'Input' || !enableSubmit
+  const disabled = validRecipients.length <= 0 || delivery.type !== 'Writing'
+
   const label = useMemo(() => {
-    switch (postStatus.type) {
-      case 'Initialize':
-      case 'Input':
-        return 'Multipost'
-      case 'Process':
-        return 'Multiposting'
-      case 'Output':
-        return 'Multiposted'
+    switch (delivery.type) {
+      case 'Initial':
+      case 'Writing':
+        return 'Crosspost'
+      case 'OnDelivery':
+        return 'Crossposting'
+      case 'Delivered':
+        return 'Crossposted'
     }
-  }, [postStatus])
+  }, [delivery])
 
   return (
     <button

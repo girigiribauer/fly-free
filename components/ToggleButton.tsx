@@ -1,16 +1,16 @@
-import style from '~/components/ServiceToggle.module.css'
+import style from '~/components/ToggleButton.module.css'
 
-export type ServiceToggleProps = {
+export type ToggleButtonProps = {
   id: string
   state: boolean
-  handleSwitch?: (state: boolean) => void
+  handleToggle: (state: boolean) => void
 }
 
-export const ServiceToggle = ({
+export const ToggleButton = ({
   id,
   state,
-  handleSwitch = () => {},
-}: ServiceToggleProps) => {
+  handleToggle,
+}: ToggleButtonProps) => {
   return (
     <label className={style.toggle}>
       <input
@@ -19,7 +19,7 @@ export const ServiceToggle = ({
         id={id}
         name={id}
         checked={state}
-        onChange={(e) => handleSwitch?.(e.target.checked)}
+        onChange={(e) => handleToggle(e.target.checked)}
       />
       <img
         src="/assets/toggle-on.svg"
