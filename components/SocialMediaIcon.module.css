@@ -7,14 +7,15 @@
   position: relative;
 }
 
-.snsIcon {
+.icon {
   width: 40px;
   height: 40px;
   display: block;
   border-radius: 5px;
 }
-.paused > .snsIcon,
-.invalid > .snsIcon {
+.initial > .icon,
+.paused > .icon,
+.invalid > .icon {
   opacity: 0.5;
   filter: grayscale(100%);
 }

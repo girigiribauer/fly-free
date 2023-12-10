@@ -7,9 +7,9 @@ import {
   SelectorDroppedImage,
   SelectorTextarea,
 } from '~/definitions'
+import { debounce } from '~/libs/debounce'
 import { createDraft } from '~/models/Draft'
 import type { Draft } from '~/models/Draft'
-import { debounce } from '~libs/debounce'
 
 export const useScanDraft = (
   container: HTMLElement | undefined,
@@ -54,7 +54,9 @@ export const useScanDraft = (
 
       if (!textarea) return
 
-      const newText = textarea.textContent
+      const newText = [...textarea.querySelectorAll('[data-block="true"]')]
+        .map((b) => b.textContent)
+        .join('\n')
       const newImages = attachments
         ? Array.from(
             attachments.querySelectorAll(SelectorDroppedImage),

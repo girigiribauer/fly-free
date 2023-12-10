@@ -1,8 +1,8 @@
 {
   "name": "fly-free",
   "displayName": "FlyFree",
-  "version": "0.3.0",
-  "description": "A multipost tool for SNS to Fly Free!",
+  "version": "0.4.0",
+  "description": "A crosspost tool for SNS to Fly Free!",
   "author": "girigiribauer",
   "scripts": {
     "dev": "rm -rf build .plasmo && plasmo dev",
@@ -25,9 +25,11 @@
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@types/twitter-text": "^3.1.6",
+    "mem-storage-area": "^1.0.3",
     "prettier": "3.0.3",
     "typescript": "5.2.2",
-    "vitest": "^0.34.6"
+    "vitest": "^0.34.6",
+    "vitest-chrome": "^0.1.0"
   },
   "manifest": {
     "permissions": [

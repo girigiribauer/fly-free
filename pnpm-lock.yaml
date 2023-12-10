@@ -46,6 +46,9 @@ devDependencies:
   '@types/twitter-text':
     specifier: ^3.1.6
     version: 3.1.6
+  mem-storage-area:
+    specifier: ^1.0.3
+    version: 1.0.3
   prettier:
     specifier: 3.0.3
     version: 3.0.3
@@ -55,6 +58,9 @@ devDependencies:
   vitest:
     specifier: ^0.34.6
     version: 0.34.6
+  vitest-chrome:
+    specifier: ^0.1.0
+    version: 0.1.0
 
 packages:
 
@@ -2476,6 +2482,13 @@ packages:
     resolution: {integrity: sha512-yW/qTM4mRBBcsA9Xw9FbcImYtFPY7sgr+G/O5RDYVmxiy9a+pE5FyoFUi8JYCZY5nicj8atrr1pcfPiYpeNGOA==}
     dev: true
 
+  /@types/chrome@0.0.114:
+    resolution: {integrity: sha512-i7qRr74IrxHtbnrZSKUuP5Uvd5EOKwlwJq/yp7+yTPihOXnPhNQO4Z5bqb1XTnrjdbUKEJicaVVbhcgtRijmLA==}
+    dependencies:
+      '@types/filesystem': 0.0.32
+      '@types/har-format': 1.2.12
+    dev: true
+
   /@types/chrome@0.0.245:
     resolution: {integrity: sha512-bBdONkLO8wMbJK6iG0Q8ShFuh67Grnod+5OpClJaa8MuKJXP/Kjl3f8wRYeMOnQ0Q8HDgpUlopu8bvl9siR8/A==}
     dependencies:
@@ -4194,6 +4207,10 @@ packages:
     resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
     dev: false
 
+  /mem-storage-area@1.0.3:
+    resolution: {integrity: sha512-UwDsIj6Fmml8NPiPp7QGJavwZVbXMFLvVDfshv3486KQHDcxOExr0od4YkUdJVWFlujZxtct59mEtsPvAQTOMQ==}
+    dev: true
+
   /merge-stream@2.0.0:
     resolution: {integrity: sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==}
     dev: false
@@ -5564,6 +5581,12 @@ packages:
       rollup: 3.29.4
     optionalDependencies:
       fsevents: 2.3.3
+    dev: true
+
+  /vitest-chrome@0.1.0:
+    resolution: {integrity: sha512-Bs1uywAolbc46h2tcaETQyFMTnOHjSA85iH10Zoe8ZMEl/71nuSdxs3z+KMxVZtN88TEgWicnl5vmbDO1OhoEw==}
+    dependencies:
+      '@types/chrome': 0.0.114
     dev: true
 
   /vitest@0.34.6:

@@ -2,20 +2,47 @@ import { BskyAgent, ComAtprotoRepoUploadBlob, RichText } from '@atproto/api'
 import type { Record } from '@atproto/api/dist/client/types/app/bsky/feed/post'
 import * as Promise from 'bluebird'
 
-import type { Service } from '~/models/backend/Service'
-import { getDataAsync } from '~/models/backend/Service'
-import type { Store } from '~/models/backend/Store'
+import type { Draft } from '~/models/Draft'
 import type { Post, PostImage } from '~/models/Post'
-import type { PreferenceBluesky } from '~/models/PreferenceBluesky'
+import type { PostValidateState } from '~/models/PostValidateState'
+import type { Preference } from '~/models/Preference'
 
-const service = 'Bluesky'
+export const checkValidation = (
+  draft: Draft,
+  pref: Preference,
+): PostValidateState => {
+  if (!draft) {
+    return {
+      type: 'Invalid',
+      errors: ['no draft'],
+    }
+  }
+  if (pref.blueskyUsername === '' || pref.blueskyPassword === '') {
+    return {
+      type: 'Invalid',
+      errors: ['no username or password'],
+    }
+  }
 
-export const createBluesky = (store: Store): Service => ({
-  post,
-  getDataAsync: getDataAsync.bind(this, store),
-  service,
-  store,
-})
+  const { text, imageURLs } = draft
+  if ((!text || text.length === 0) && (!imageURLs || imageURLs.length === 0)) {
+    return {
+      type: 'Invalid',
+      errors: ['no text'],
+    }
+  }
+  if (text.length > 300) {
+    return {
+      type: 'Invalid',
+      errors: ['parse invalid'],
+    }
+  }
+  // TODO: case embedded video
+
+  return {
+    type: 'Valid',
+  }
+}
 
 const convertBskyAppURL = (uri: string, username: string): string | null => {
   const matched = uri
@@ -27,12 +54,9 @@ const convertBskyAppURL = (uri: string, username: string): string | null => {
   return `https://bsky.app/profile/${username}/post/${matched[1]}`
 }
 
-const post = async (
-  post: Post,
-  preference: PreferenceBluesky,
-): Promise<string> => {
+export const post = async (post: Post, pref: Preference): Promise<string> => {
   const { text, images, linkcard } = post
-  const { username, password } = preference
+  const { blueskyUsername: username, blueskyPassword: password } = pref
 
   const agent = new BskyAgent({ service: 'https://bsky.social' })
   const loginResponse = await agent.login({

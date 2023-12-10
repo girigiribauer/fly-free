@@ -1,4 +1,4 @@
-export const debounce = <F extends (...args: Parameters<F>) => ReturnType<F>>(
+export const debounce = <F extends (...args: any[]) => ReturnType<F>>(
   callback: F,
   delay = 200,
 ) => {
