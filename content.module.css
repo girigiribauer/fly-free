@@ -62,6 +62,7 @@
   flex-direction: row !important;
   align-items: center !important;
   justify-content: center !important;
+  background: var(--color-white) !important;
   font-family: sans-serif;
 }
 
