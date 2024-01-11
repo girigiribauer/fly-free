@@ -7,12 +7,6 @@ export const SelectorAttachments =
   '[data-testid="twc-cc-mask"] ~ div [data-testid="attachments"]'
 export const SelectorLinkcard =
   '[data-testid="twc-cc-mask"] ~ div [data-testid="card.wrapper"]'
-export const SelectorLinkcardDomain = [
-  '[data-testid="card.layoutSmall.detail"]>div:first-child',
-  '[data-testid="card.layoutLarge.detail"]>div:first-child',
-  '[data-testid="card.layoutSmall.media"]>div:first-child',
-  '[data-testid="card.layoutLarge.media"]>div:first-child',
-].join(', ')
 export const SelectorDroppedImage = [
   'img[src^="blob:https://twitter.com/"]',
   'img[src^="blob:https://x.com/"]',

@@ -2,7 +2,6 @@ import {
   SelectorAttachments,
   SelectorDroppedImage,
   SelectorLinkcard,
-  SelectorLinkcardDomain,
   SelectorTextarea,
 } from '~/definitions'
 import { createDraft } from '~/models/Draft'
@@ -43,15 +42,5 @@ export const captureDraft = (doms: DraftDOMs): Draft | null => {
       )
     : []
 
-  let newDomain: string = ''
-  if (linkcard) {
-    const domainContainer = linkcard.querySelector(SelectorLinkcardDomain)
-    if (!domainContainer) {
-      console.warn('not found domainContainer')
-    }
-
-    newDomain = domainContainer.textContent
-  }
-
-  return createDraft(newText, newImages, newDomain)
+  return createDraft(newText, newImages)
 }
