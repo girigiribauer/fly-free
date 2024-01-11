@@ -13,7 +13,7 @@
     "@atproto/api": "^0.6.11",
     "bluebird": "^3.7.2",
     "parse5": "^7.1.2",
-    "plasmo": "0.83.0",
+    "plasmo": "0.84.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "twitter-text": "^3.1.0"
