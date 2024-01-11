@@ -17,12 +17,12 @@ import { useReplaceTitle } from '~/hooks/useReplaceTitle'
 import { useResizeAndReload } from '~/hooks/useResizeAndReload'
 import { useScanDraft } from '~/hooks/useScanDraft'
 import { useStore } from '~/hooks/useStore'
+import { captureDraft, queryFromUnstableDOM } from '~/libs/twitterDOM'
 import type {
   DeliveryAgentState,
   DeliveryAgentStateDelivered,
   DeliveryAgentStateOnDelivery,
 } from '~/models/DeliveryAgentState'
-import type { Draft } from '~/models/Draft'
 import type { PostMessageState } from '~/models/PostMessageState'
 import type { ProcessMessage } from '~/models/ProcessMessage'
 import type { SocialMedia } from '~/models/SocialMedia'
@@ -75,35 +75,35 @@ const Overlay = () => {
     [],
   )
 
-  const handleSubmit = useCallback(
-    (draft: Draft) => {
-      if (!draft) return
-      if (delivery.type !== 'Writing') return
+  const handleSubmit = useCallback(() => {
+    if (delivery.type !== 'Writing') return
 
-      const validRecipients = delivery.recipients
-        .filter(
-          (r) =>
-            r.type === 'Writing' &&
-            r.postValidate.type === 'Valid' &&
-            r.enabled &&
-            !r.paused,
-        )
-        .map<PostMessageState>((r) => ({
-          type: 'Posting',
-          recipient: r.recipient,
-        }))
+    // Sentences are cut off in the middle (only Bluesky)
+    const draft = captureDraft(queryFromUnstableDOM())
+    if (!draft) return
 
-      setDelivery({ type: 'OnDelivery', recipients: validRecipients })
+    const validRecipients = delivery.recipients
+      .filter(
+        (r) =>
+          r.type === 'Writing' &&
+          r.postValidate.type === 'Valid' &&
+          r.enabled &&
+          !r.paused,
+      )
+      .map<PostMessageState>((r) => ({
+        type: 'Posting',
+        recipient: r.recipient,
+      }))
 
-      const message: ProcessMessage = {
-        type: 'Post',
-        draft: JSON.stringify(draft),
-        recipients: validRecipients,
-      }
-      chrome.runtime.sendMessage(message)
-    },
-    [delivery],
-  )
+    setDelivery({ type: 'OnDelivery', recipients: validRecipients })
+
+    const message: ProcessMessage = {
+      type: 'Post',
+      draft: JSON.stringify(draft),
+      recipients: validRecipients,
+    }
+    chrome.runtime.sendMessage(message)
+  }, [delivery])
 
   const handleSubmitProxy = () => {
     if (!submitRef.current) return
@@ -290,7 +290,7 @@ const Overlay = () => {
             innerRef={submitRef}
             delivery={delivery}
             validRecipients={validRecipients}
-            handleSubmit={() => handleSubmit(draft)}
+            handleSubmit={handleSubmit}
           />
           <a
             className={style.optionLink}
