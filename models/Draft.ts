@@ -4,12 +4,8 @@ export type Draft = {
   linkcardURL: string | null
 }
 
-export const createDraft = (
-  text: string,
-  imageURLs: string[],
-  domain: string,
-): Draft => {
-  const linkcardURL = pickupLinkcardURL(text, domain)
+export const createDraft = (text: string, imageURLs: string[]): Draft => {
+  const linkcardURL = pickupLinkcardURL(text)
 
   return {
     text,
@@ -18,11 +14,7 @@ export const createDraft = (
   }
 }
 
-export const pickupLinkcardURL = (
-  text: string,
-  domain: string,
-): string | null => {
-  if (domain === '') return null
+export const pickupLinkcardURL = (text: string): string | null => {
   const urlRe =
     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi
   const links = [...text.matchAll(urlRe)]
@@ -32,5 +24,5 @@ export const pickupLinkcardURL = (
 
   const link = links.slice().reverse().at(0)[0]
 
-  return link.includes(domain) ? link : null
+  return link
 }
