@@ -5,9 +5,9 @@ export const SelectorTextarea =
   '[data-testid="twc-cc-mask"] ~ div [data-testid="tweetTextarea_0"]'
 export const SelectorAttachments =
   '[data-testid="twc-cc-mask"] ~ div [data-testid="attachments"]'
-export const SelectorCardWrapper =
+export const SelectorLinkcard =
   '[data-testid="twc-cc-mask"] ~ div [data-testid="card.wrapper"]'
-export const SelectorCardDomain = [
+export const SelectorLinkcardDomain = [
   '[data-testid="card.layoutSmall.detail"]>div:first-child',
   '[data-testid="card.layoutLarge.detail"]>div:first-child',
   '[data-testid="card.layoutSmall.media"]>div:first-child',

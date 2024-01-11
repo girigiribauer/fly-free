@@ -1,14 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import {
-  SelectorAttachments,
-  SelectorCardDomain,
-  SelectorCardWrapper,
-  SelectorDroppedImage,
-  SelectorTextarea,
-} from '~/definitions'
-import { debounce } from '~/libs/debounce'
-import { createDraft } from '~/models/Draft'
+import { captureDraft, queryFromUnstableDOM } from '~/libs/twitterDOM'
 import type { Draft } from '~/models/Draft'
 
 export const useScanDraft = (
@@ -16,9 +8,10 @@ export const useScanDraft = (
   handleSubmit: () => void,
 ): Draft | null => {
   let textareaObserver: MutationObserver
+
   const [draft, setDraft] = useState<Draft | null>(null)
 
-  const handleKeyDown = useCallback(
+  const handleInterceptMetaKey = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
         event.preventDefault()
@@ -33,51 +26,20 @@ export const useScanDraft = (
     [draft],
   )
 
-  const observeTwitterUI = useCallback(() => {
-    let textarea: HTMLDivElement
-    let attachments: HTMLDivElement
-    let cardWrapper: HTMLDivElement
+  const observeTwitterDOM = useCallback(() => {
+    const handleDOMChanges = () => {
+      const { textarea, attachments, linkcard } = queryFromUnstableDOM()
 
-    // TODO:
-    // - detectable changes
-    // - be robust to changes
-    // - beautify
-    const callback = () => {
-      if (!textarea) {
-        textarea = document.querySelector(SelectorTextarea)
-        if (textarea) {
-          textarea.onkeydown = handleKeyDown
-        }
-      }
-      attachments = document.querySelector(SelectorAttachments)
-      cardWrapper = document.querySelector(SelectorCardWrapper)
-
-      if (!textarea) return
-
-      const newText = [...textarea.querySelectorAll('[data-block="true"]')]
-        .map((b) => b.textContent)
-        .join('\n')
-      const newImages = attachments
-        ? Array.from(
-            attachments.querySelectorAll(SelectorDroppedImage),
-            (elem: HTMLImageElement) => elem.src,
-          )
-        : []
-
-      let newDomain: string = ''
-      if (cardWrapper) {
-        const domainContainer = cardWrapper.querySelector(SelectorCardDomain)
-        if (!domainContainer) {
-          console.warn('not found domainContainer')
-        }
-
-        newDomain = domainContainer.textContent
+      if (textarea) {
+        textarea.removeEventListener('keydown', handleInterceptMetaKey)
+        textarea.addEventListener('keydown', handleInterceptMetaKey)
       }
 
-      setDraft(createDraft(newText, newImages, newDomain))
+      const draft = captureDraft({ textarea, attachments, linkcard })
+      setDraft(draft)
     }
 
-    textareaObserver = new MutationObserver(debounce(callback))
+    textareaObserver = new MutationObserver(handleDOMChanges)
     textareaObserver.observe(container, {
       attributes: true,
       childList: true,
@@ -86,21 +48,21 @@ export const useScanDraft = (
     })
   }, [container])
 
-  const unobserveTwitterUI = useCallback(() => {
+  const unobserveTwitterDOM = useCallback(() => {
     textareaObserver?.disconnect()
   }, [])
 
   useEffect(() => {
     if (!container) return
     if (document.readyState === 'complete') {
-      observeTwitterUI()
-      return unobserveTwitterUI
+      observeTwitterDOM()
+      return unobserveTwitterDOM
     } else {
-      window.addEventListener('load', observeTwitterUI)
+      window.addEventListener('load', observeTwitterDOM)
 
       return () => {
-        window.removeEventListener('load', observeTwitterUI)
-        unobserveTwitterUI()
+        window.removeEventListener('load', observeTwitterDOM)
+        unobserveTwitterDOM()
       }
     }
   }, [container])
