@@ -31,7 +31,7 @@ describe('convertDraft2Post', () => {
         thumbnail: {
           binary: ogpSiteImage,
           mimetype: 'image/png',
-          filesize: 12379,
+          size: 12379,
         },
         title: 'The Open Graph protocol',
         description:
