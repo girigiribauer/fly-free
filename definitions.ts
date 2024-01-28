@@ -1,5 +1,5 @@
 export const StorageIdentifier = 'Flyfree'
-export const ContentPageTitle = 'FlyFree - Multiple posts'
+export const ContentPageTitle = 'FlyFree - Social Media Crossposting Tool'
 
 export const SelectorTextarea =
   '[data-testid="twc-cc-mask"] ~ div [data-testid="tweetTextarea_0"]'

@@ -3,7 +3,8 @@ import type { Record } from '@atproto/api/dist/client/types/app/bsky/feed/post'
 import * as Promise from 'bluebird'
 
 import type { Draft } from '~/models/Draft'
-import type { Post, PostImage } from '~/models/Post'
+import type { Post } from '~/models/Post'
+import type { PostImage } from '~/models/PostImage'
 import type { PostValidateState } from '~/models/PostValidateState'
 import type { Preference } from '~/models/Preference'
 

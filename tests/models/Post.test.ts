@@ -1,8 +1,10 @@
+import path from 'path'
+import Image from 'image-js'
 import { describe, expect, test } from 'vitest'
 
 import type { Draft } from '~/models/Draft'
 import { convertDraft2Post, type Post } from '~/models/Post'
-import { ogpSiteImage } from '~/tests/models/PostSampleImage'
+import { ogpSiteImage } from '~/tests/resources/ogpmeSiteImage'
 
 describe('convertDraft2Post', () => {
   test('Convert directly in case regular text', async () => {
@@ -31,7 +33,9 @@ describe('convertDraft2Post', () => {
         thumbnail: {
           binary: ogpSiteImage,
           mimetype: 'image/png',
-          size: 12379,
+          width: 300,
+          height: 300,
+          filesize: 12379,
         },
         title: 'The Open Graph protocol',
         description:
