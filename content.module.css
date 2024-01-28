@@ -90,7 +90,6 @@
 :global(header[role="banner"]),
 :global([data-testid="twc-cc-mask"]),
 :global([aria-expanded][aria-haspopup][aria-label][role="button"]), /* Choose audience */
-:global([role="presentation"]),
 :global([data-testid="gifSearchButton"]),
 :global([data-testid="createPollButton"]),
 :global([data-testid="scheduleOption"]),
@@ -111,4 +110,9 @@
 
 :global(span[data-offset-key]) {
   background-color: inherit !important;
+}
+
+/* adjust height for emoji popup */
+:global([data-testid="HoverCard"] > div) {
+  max-height: 260px;
 }
