@@ -14,6 +14,9 @@
   width: 100%;
 }
 
+/**
+ * FlyFree header
+ */
 .header {
   width: 100%;
   height: 60px;
@@ -54,7 +57,7 @@
 }
 
 /**
- * override CSS
+ * Add flyfree placeholder
  */
 :global(#placeholder) {
   display: inline-flex !important;
@@ -86,33 +89,149 @@
   display: none !important;
 }
 
-/* hide unnecessary UIs */
-:global(header[role="banner"]),
-:global([data-testid="twc-cc-mask"]),
-:global([aria-expanded][aria-haspopup][aria-label][role="button"]), /* Choose audience */
+/**
+ * Hide Twitter background contents
+ */
+:global([data-testid="twc-cc-mask"]) {
+  display: none !important;
+}
+
+/**
+ * Hide Twitter avatar
+ */
+:global([data-testid^="UserAvatar-Container-"]) {
+  display: none !important;
+}
+
+/**
+ * Hide "choose audience" button
+ * (for Twitter community)
+ */
+:global([aria-expanded][aria-haspopup][aria-label][role="button"]) {
+  display: none !important;
+}
+
+/**
+ * Hide hashtag popup on input
+ */
+:global(#typeaheadDropdownWrapped-0) {
+  display: none !important;
+}
+
+/**
+ * Change background color on character limit exceeded
+ */
+:global(span[data-offset-key]) {
+  background-color: inherit !important;
+}
+
+/**
+ * Hide edit media button (svg path matched)
+ */
+:global([data-testid="attachments"] [aria-label][role="group"] [aria-label][role="button"]:has(svg path[d="M22.21 2.793c-1.22-1.217-3.18-1.26-4.45-.097l-10.17 9.32C5.02 12.223 3 14.376 3 17v5h5c2.62 0 4.78-2.022 4.98-4.593L22.3 7.239c1.17-1.269 1.12-3.229-.09-4.446zM8 20H5v-3c0-1.657 1.34-3 3-3s3 1.343 3 3-1.34 3-3 3zM20.83 5.888l-8.28 9.033c-.5-1.09-1.38-1.971-2.47-2.47l9.03-8.28c.48-.44 1.22-.424 1.68.036s.48 1.201.04 1.681z"])) {
+  display: none !important;
+}
+
+/**
+ * Hide reply target
+ */
+:global([aria-label]:has(>div>svg path[d="M12 1.75C6.34 1.75 1.75 6.34 1.75 12S6.34 22.25 12 22.25 22.25 17.66 22.25 12 17.66 1.75 12 1.75zm-.25 10.48L10.5 17.5l-2-1.5v-3.5L7.5 9 5.03 7.59c1.42-2.24 3.89-3.75 6.72-3.84L11 6l-2 .5L8.5 9l5 1.5-1.75 1.73zM17 14v-3l-1.5-3 2.88-1.23c1.17 1.42 1.87 3.24 1.87 5.23 0 1.3-.3 2.52-.83 3.61L17 14z"])) {
+  display: none !important;
+}
+
+/**
+ *
+ */
+:global(div:has(> a[href="/compose/tweet/tags"])) {
+  display: none !important;
+}
+
+/**
+ * Hide Twitter variable buttons
+ * - gif
+ * - vote
+ * - schedule posting
+ * - add location
+ */
 :global([data-testid="gifSearchButton"]),
 :global([data-testid="createPollButton"]),
 :global([data-testid="scheduleOption"]),
-:global([data-testid="geoButton"]),
-:global([data-testid="attachments"] [aria-label][role="group"] [aria-label][role="button"]), /* Edit media, Remove media */
-:global(div:has(> a[href="/compose/tweet/tags"])),
-:global([aria-label]:has(>div>svg path[d="M12 1.75C6.34 1.75 1.75 6.34 1.75 12S6.34 22.25 12 22.25 22.25 17.66 22.25 12 17.66 1.75 12 1.75zm-.25 10.48L10.5 17.5l-2-1.5v-3.5L7.5 9 5.03 7.59c1.42-2.24 3.89-3.75 6.72-3.84L11 6l-2 .5L8.5 9l5 1.5-1.75 1.73zM17 14v-3l-1.5-3 2.88-1.23c1.17 1.42 1.87 3.24 1.87 5.23 0 1.3-.3 2.52-.83 3.61L17 14z"])), /* Everyone can reply */
-:global([data-testid="countdown-circle"]),
-:global([data-testid="countdown-circle"] ~ div) {
+:global([data-testid="geoButton"]) {
   display: none !important;
-}
-
-/* hide unnecessary UIs (for width >= 688px) */
-:global([data-testid="mask"]),
-:global([data-testid="primaryColumn"]) {
-  display: none !important;
-}
-
-:global(span[data-offset-key]) {
-  background-color: inherit !important;
 }
 
 /* adjust height for emoji popup */
 :global([data-testid="HoverCard"] > div) {
   max-height: 260px;
+}
+
+/**
+ * Hide words count
+ */
+:global([data-testid="countdown-circle"]) {
+  display: none !important;
+}
+
+/**
+ * Hide thread button
+ */
+:global([data-testid="countdown-circle"] ~ div) {
+  display: none !important;
+}
+
+/**
+ * For width >= 688px
+ * Hide background overlay
+ */
+:global([data-testid="mask"]) {
+  display: none !important;
+}
+
+/**
+ * For width >= 688px
+ * Hide Twitter contents (timeline, main textarea)
+ */
+:global([data-testid="primaryColumn"]),
+:global([data-testid="sidebarColumn"]) {
+  display: none !important;
+}
+
+/**
+ * For width >= 688px
+ * Hide side menu bar
+ */
+:global(header[role="banner"]) {
+  display: none !important;
+}
+
+/**
+ * For width >= 688px
+ * Hide upper close button
+ */
+:global([data-testid="app-bar-close"]) {
+  display: none !important;
+}
+
+/**
+ * For width >= 688px
+ * Hide save draft button
+ */
+:global([data-testid="unsentButton"]) {
+  display: none !important;
+}
+
+/**
+ * For width >= 688px
+ * Hide edit media button (text matched)
+ */
+:global([data-testid="attachments"] [aria-label][role="group"] [aria-label][role="button"]:has(span>span)) {
+  display: none !important;
+}
+
+/**
+ * For width >= 688px
+ * Hide DM
+ */
+:global([data-testid="DMDrawer"]) {
+  display: none !important;
 }
