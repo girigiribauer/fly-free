@@ -13,25 +13,27 @@ import {
 } from '~/models/PostImage'
 import type { PostImage } from '~/models/PostImage'
 
-const resourceHandlers = [
-  http.get('http://localhost/:imageFile', async ({ params }) => {
-    const binary = await readBinaryFromPath(`../resources/${params.imageFile}`)
-
-    return HttpResponse.arrayBuffer(binary.buffer, {
-      headers: {
-        'Content-Type': 'image/png',
-      },
-    })
-  }),
-]
-const resourceServer = setupServer(...resourceHandlers)
-
 const readBinaryFromPath = async (filepath: string): Promise<Uint8Array> => {
   const buffer = await readFile(path.join(__dirname, filepath))
   return Uint8Array.from(buffer)
 }
 
 describe('convertImageURL2PostImage', () => {
+  const resourceHandlers = [
+    http.get('http://localhost/:imageFile', async ({ params }) => {
+      const binary = await readBinaryFromPath(
+        `../resources/${params.imageFile}`,
+      )
+
+      return HttpResponse.arrayBuffer(binary.buffer, {
+        headers: {
+          'Content-Type': 'image/png',
+        },
+      })
+    }),
+  ]
+  const resourceServer = setupServer(...resourceHandlers)
+
   beforeAll(() => {
     resourceServer.listen()
   })
