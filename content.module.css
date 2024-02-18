@@ -147,6 +147,13 @@
 }
 
 /**
+ * Maintain editor height for operating emoji popup
+ */
+:global([data-testid="tweetTextarea_0_label"]) {
+  min-height: 230px !important;
+}
+
+/**
  * Hide Twitter variable buttons
  * - gif
  * - vote
