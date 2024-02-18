@@ -1,6 +1,5 @@
 import styleTextDeliveryView from 'data-text:~/components/DeliveryView.module.css'
 import styleTextRecipientList from 'data-text:~/components/RecipientList.module.css'
-import styleTextReloadButton from 'data-text:~/components/ReloadButton.module.css'
 import styleTextSocialMediaIcon from 'data-text:~/components/SocialMediaIcon.module.css'
 import styleTextSubmitButton from 'data-text:~/components/SubmitButton.module.css'
 import styleTextContent from 'data-text:~/content.module.css'
@@ -9,7 +8,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { DeliveryView } from '~/components/DeliveryView'
 import { RecipientList } from '~/components/RecipientList'
-import { ReloadButton } from '~/components/ReloadButton'
 import { SubmitButton } from '~/components/SubmitButton'
 import style from '~/content.module.css'
 import { SelectorTweetButton } from '~/definitions'
@@ -36,7 +34,6 @@ export const getStyle = () => {
     styleTextContent, // for content.tsx
     styleTextRecipientList, // for RecipientList.tsx
     styleTextDeliveryView, // for DeliveryView.tsx
-    styleTextReloadButton, // for ReloadButton.tsx
     styleTextSocialMediaIcon, // for SocialMediaIcon.tsx
     styleTextSubmitButton, // for SubmitButton.tsx
   ].join('\n')
@@ -276,7 +273,6 @@ const Overlay = () => {
     <>
       <div className={style.header}>
         <div className={style.recipientsArea}>
-          <ReloadButton disabled={!isBeforePost} />
           {isBeforePost ? (
             <RecipientList
               recipients={recipients}
