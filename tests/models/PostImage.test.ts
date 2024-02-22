@@ -2,8 +2,7 @@ import { readFile } from 'fs/promises'
 import path from 'path'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-import { afterEach } from 'node:test'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest'
 
 import {
   convertImageURL2PostImage,
@@ -19,6 +18,7 @@ const readBinaryFromPath = async (filepath: string): Promise<Uint8Array> => {
 }
 
 describe('convertImageURL2PostImage', () => {
+  // mock uploading image files
   const resourceHandlers = [
     http.get('http://localhost/:imageFile', async ({ params }) => {
       const binary = await readBinaryFromPath(
