@@ -1,5 +1,9 @@
-import { Parser, type DefaultTreeAdapterMap } from 'parse5'
-import type { TextNode } from 'parse5/dist/tree-adapters/default'
+import { DOMParser } from '@xmldom/xmldom'
+import { Parser } from 'parse5'
+import type { DefaultTreeAdapterMap } from 'parse5'
+import { serializeToString } from 'xmlserializer'
+import { isAttribute, isTextNode, useNamespaces } from 'xpath'
+import type { SelectSingleReturnType } from 'xpath'
 
 export type OpenGraph = {
   title: string
@@ -9,11 +13,6 @@ export type OpenGraph = {
 }
 
 export const parse = async (linkcardURL: string): Promise<OpenGraph | null> => {
-  let title: string | null = null
-  let description: string | null = null
-  let ogImage: string | null = null
-  let url: string | null = null
-
   let res: Response
   try {
     res = await fetch(linkcardURL)
@@ -21,53 +20,19 @@ export const parse = async (linkcardURL: string): Promise<OpenGraph | null> => {
     return null
   }
   const html = await res.text()
+  const ast = Parser.parse<DefaultTreeAdapterMap>(html)
+  const xhtml = serializeToString(ast)
+  const document = new DOMParser().parseFromString(xhtml)
 
   // TODO: when not UTF-8
   // here!
 
-  const document = Parser.parse<DefaultTreeAdapterMap>(html)
+  const title = parseTitle(document)
+  const description = parseDescription(document)
+  const ogImage = parseOgImage(document)
+  const url = parseURL(document, linkcardURL)
 
-  const htmlElement = document.childNodes.find((a) => a.nodeName === 'html')
-  if (!htmlElement || htmlElement.nodeName !== 'html') return null
-
-  htmlElement.childNodes.forEach((a) => {
-    if (a.nodeName === 'head') {
-      a.childNodes.forEach((b) => {
-        if (
-          b.nodeName === 'title' &&
-          b.childNodes.some((c) => c.nodeName === '#text')
-        ) {
-          const titleElement = b.childNodes.find((c) => c.nodeName === '#text')
-          if (titleElement && titleElement.nodeName === '#text') {
-            title = (titleElement as TextNode).value
-          }
-        }
-
-        if (
-          b.nodeName === 'meta' &&
-          b.attrs.some((c) => c.name === 'name' && c.value === 'description')
-        ) {
-          description = b.attrs.find((c) => c.name === 'content').value ?? null
-        }
-
-        if (
-          b.nodeName === 'meta' &&
-          b.attrs.some((c) => c.name === 'property' && c.value === 'og:image')
-        ) {
-          ogImage = b.attrs.find((c) => c.name === 'content').value ?? null
-        }
-
-        if (
-          b.nodeName === 'meta' &&
-          b.attrs.some((c) => c.name === 'property' && c.value === 'og:url')
-        ) {
-          url = b.attrs.find((c) => c.name === 'content').value ?? null
-        }
-      })
-    }
-  })
-
-  if (!title || !description || !ogImage || !url) {
+  if (!ogImage) {
     return null
   }
 
@@ -77,4 +42,86 @@ export const parse = async (linkcardURL: string): Promise<OpenGraph | null> => {
     ogImage,
     url,
   }
+}
+
+const parseTitle = (doc: Document): string => {
+  const select = useNamespaces({ x: 'http://www.w3.org/1999/xhtml' })
+  let title: string = ''
+
+  const regularTitleContent: SelectSingleReturnType = select(
+    'string(//x:title)',
+    doc,
+    true,
+  )
+  if (isTextNode(regularTitleContent)) {
+    title = regularTitleContent.nodeValue
+  }
+
+  const ogTitleAttribute: SelectSingleReturnType = select(
+    '//x:meta[@property="og:title"]/@content',
+    doc,
+    true,
+  )
+  if (isAttribute(ogTitleAttribute)) {
+    title = ogTitleAttribute.nodeValue
+  }
+
+  return title
+}
+
+const parseDescription = (doc: Document): string => {
+  const select = useNamespaces({ x: 'http://www.w3.org/1999/xhtml' })
+  let description: string = ''
+
+  const regularDescriptionAttribute: SelectSingleReturnType = select(
+    '//x:meta[@name="description"]/@content',
+    doc,
+    true,
+  )
+  if (isAttribute(regularDescriptionAttribute)) {
+    description = regularDescriptionAttribute.nodeValue
+  }
+
+  const ogDescriptionAttribute: SelectSingleReturnType = select(
+    '//x:meta[@property="og:description"]/@content',
+    doc,
+    true,
+  )
+  if (isAttribute(ogDescriptionAttribute)) {
+    description = ogDescriptionAttribute.nodeValue
+  }
+
+  return description
+}
+
+const parseOgImage = (doc: Document): string | null => {
+  const select = useNamespaces({ x: 'http://www.w3.org/1999/xhtml' })
+  let ogImage: string | null = null
+
+  const ogImageAttribute: SelectSingleReturnType = select(
+    '//x:meta[@property="og:image"]/@content',
+    doc,
+    true,
+  )
+  if (isAttribute(ogImageAttribute)) {
+    ogImage = ogImageAttribute.nodeValue
+  }
+
+  return ogImage
+}
+
+const parseURL = (doc: Document, originURL: string): string => {
+  const select = useNamespaces({ x: 'http://www.w3.org/1999/xhtml' })
+  let url: string = originURL
+
+  const ogURLAttribute: SelectSingleReturnType = select(
+    '//x:meta[@property="og:url"]/@content',
+    doc,
+    true,
+  )
+  if (isAttribute(ogURLAttribute)) {
+    url = ogURLAttribute.nodeValue
+  }
+
+  return url
 }

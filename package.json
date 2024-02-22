@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@atproto/api": "^0.6.11",
+    "@xmldom/xmldom": "^0.8.10",
     "bluebird": "^3.7.2",
     "buffer": "^6.0.3",
     "image-dimensions": "^2.3.0",
@@ -19,7 +20,9 @@
     "plasmo": "0.84.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "twitter-text": "^3.1.0"
+    "twitter-text": "^3.1.0",
+    "xmlserializer": "^0.6.1",
+    "xpath": "^0.0.34"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.1.0",
