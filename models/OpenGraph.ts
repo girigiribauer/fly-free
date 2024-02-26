@@ -15,17 +15,28 @@ export type OpenGraph = {
 export const parse = async (linkcardURL: string): Promise<OpenGraph | null> => {
   let res: Response
   try {
-    res = await fetch(linkcardURL)
+    res = await fetch(linkcardURL, {
+      redirect: 'follow',
+    })
   } catch (_) {
     return null
   }
-  const html = await res.text()
+  const arrayBuffer = await res.arrayBuffer()
+  const html = new TextDecoder('utf-8').decode(arrayBuffer)
+
   const ast = Parser.parse<DefaultTreeAdapterMap>(html)
   const xhtml = serializeToString(ast)
-  const document = new DOMParser().parseFromString(xhtml)
+  let document = new DOMParser().parseFromString(xhtml)
 
-  // TODO: when not UTF-8
-  // here!
+  const charset = parseCharset(document)
+
+  if (charset !== 'utf-8') {
+    const decodedHTML = new TextDecoder(charset).decode(arrayBuffer)
+    const decodedAST = Parser.parse<DefaultTreeAdapterMap>(decodedHTML)
+    const decodedXHTML = serializeToString(decodedAST)
+
+    document = new DOMParser().parseFromString(decodedXHTML)
+  }
 
   const title = parseTitle(document)
   const description = parseDescription(document)
@@ -42,6 +53,36 @@ export const parse = async (linkcardURL: string): Promise<OpenGraph | null> => {
     ogImage,
     url,
   }
+}
+
+const parseCharset = (doc: Document): string => {
+  const select = useNamespaces({ x: 'http://www.w3.org/1999/xhtml' })
+  let charset = 'utf-8'
+
+  const oldCharsetElement: SelectSingleReturnType = select(
+    '//x:meta[@http-equiv="content-type"]/@content',
+    doc,
+    true,
+  )
+  if (isAttribute(oldCharsetElement)) {
+    const found = oldCharsetElement.nodeValue.match(
+      /text\/html;\s*charset=([A-Za-z0-9!#\$%&'\+\-\^_`\{\}~]+)/,
+    )
+    if (found?.length >= 1) {
+      charset = found[1].toLowerCase()
+    }
+  }
+
+  const charsetAttribute: SelectSingleReturnType = select(
+    '//x:meta[@charset]/@charset',
+    doc,
+    true,
+  )
+  if (isAttribute(charsetAttribute)) {
+    charset = charsetAttribute.nodeValue.trim().toLowerCase()
+  }
+
+  return charset
 }
 
 const parseTitle = (doc: Document): string => {

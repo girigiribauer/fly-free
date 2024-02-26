@@ -18,10 +18,15 @@ const mockURLs = [
     url: 'https://www.joshwcomeau.com/animation/a-friendly-introduction-to-spring-physics/',
     file: '../resources/joshwcomeau_com.html',
   },
-  {
-    url: 'https://www.itmedia.co.jp/',
-    file: '../resources/itmedia_co_jp.html',
-  },
+  // TODO: Two tests failure #6
+  // {
+  //   url: 'https://www.itmedia.co.jp/',
+  //   file: '../resources/itmedia_co_jp.html',
+  // },
+  // {
+  //   url: 'https://news.livedoor.com',
+  //   file: '../resources/news_livedoor_com.html',
+  // },
   { url: 'http://localhost/404', file: null },
 ]
 
@@ -38,7 +43,9 @@ describe('parse', () => {
 
       let buffer: string | Buffer
       try {
-        buffer = await readFile(path.join(__dirname, file), 'utf8')
+        buffer = await readFile(path.join(__dirname, file), {
+          encoding: 'utf8',
+        })
       } catch (e) {
         console.error(`mock failed ${e}`)
         return new HttpResponse(null, {
@@ -131,6 +138,33 @@ describe('parse', () => {
     const actual: OpenGraph | null = await parse(
       'https://www.joshwcomeau.com/animation/a-friendly-introduction-to-spring-physics/',
     )
+
+    expect(actual).toStrictEqual(expected)
+  })
+
+  test('https://www.itmedia.co.jp/ (Shift_JIS) returns without garbled characters', async () => {
+    const expected = {
+      title: 'IT総合情報ポータル「ITmedia」Home',
+      description:
+        'テクノロジー関連のニュース及び速報を中心に、レビューや特集記事を掲載。',
+      ogImage:
+        'https://image.itmedia.co.jp/images/logo/1200x630_500x500_top.gif',
+      url: 'https://www.itmedia.co.jp/',
+    }
+    const actual: OpenGraph | null = await parse('https://www.itmedia.co.jp/')
+
+    expect(actual).toStrictEqual(expected)
+  })
+
+  test('https://news.livedoor.com (EUC-JP) returns without garbled characters', async () => {
+    const expected = {
+      title: 'ライブドアニュース（livedoor ニュース）',
+      description:
+        'ライブドアニュースは、幅広いジャンルのニュースをいち早くお伝えします。わかりやすさ、読みやすさにこだわり、記事の核心をまとめた要約をつけています。',
+      ogImage: 'https://news.livedoor.com/img/fb/news.png?v=3.00',
+      url: 'https://news.livedoor.com/',
+    }
+    const actual: OpenGraph | null = await parse('https://news.livedoor.com')
 
     expect(actual).toStrictEqual(expected)
   })
