@@ -43,7 +43,7 @@ export const getStyle = () => {
 
 export const config: PlasmoCSConfig = {
   matches: ['https://twitter.com/intent/tweet*', 'https://x.com/intent/tweet*'],
-  run_at: 'document_idle',
+  run_at: 'document_end',
 }
 
 const Overlay = () => {

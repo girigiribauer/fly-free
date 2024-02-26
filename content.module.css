@@ -147,9 +147,17 @@
 }
 
 /**
+ * Hide image bottom labels
+ */
+:global(a[href="/compose/post/tags"]),
+:global(a[href="/compose/post/media"]) {
+  display: none !important;
+}
+
+/**
  * Maintain editor height for operating emoji popup
  */
-:global([data-testid="tweetTextarea_0_label"]) {
+:global(div:has(> div > [data-testid="tweetTextarea_0_label"])) {
   min-height: 230px !important;
 }
 

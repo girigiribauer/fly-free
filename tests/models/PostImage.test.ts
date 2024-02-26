@@ -2,8 +2,7 @@ import { readFile } from 'fs/promises'
 import path from 'path'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-import { afterEach } from 'node:test'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest'
 
 import {
   convertImageURL2PostImage,
@@ -13,25 +12,28 @@ import {
 } from '~/models/PostImage'
 import type { PostImage } from '~/models/PostImage'
 
-const resourceHandlers = [
-  http.get('http://localhost/:imageFile', async ({ params }) => {
-    const binary = await readBinaryFromPath(`../resources/${params.imageFile}`)
-
-    return HttpResponse.arrayBuffer(binary.buffer, {
-      headers: {
-        'Content-Type': 'image/png',
-      },
-    })
-  }),
-]
-const resourceServer = setupServer(...resourceHandlers)
-
 const readBinaryFromPath = async (filepath: string): Promise<Uint8Array> => {
   const buffer = await readFile(path.join(__dirname, filepath))
   return Uint8Array.from(buffer)
 }
 
 describe('convertImageURL2PostImage', () => {
+  // mock uploading image files
+  const resourceHandlers = [
+    http.get('http://localhost/:imageFile', async ({ params }) => {
+      const binary = await readBinaryFromPath(
+        `../resources/${params.imageFile}`,
+      )
+
+      return HttpResponse.arrayBuffer(binary.buffer, {
+        headers: {
+          'Content-Type': 'image/png',
+        },
+      })
+    }),
+  ]
+  const resourceServer = setupServer(...resourceHandlers)
+
   beforeAll(() => {
     resourceServer.listen()
   })

@@ -8,6 +8,9 @@ dependencies:
   '@atproto/api':
     specifier: ^0.6.11
     version: 0.6.11
+  '@xmldom/xmldom':
+    specifier: ^0.8.10
+    version: 0.8.10
   bluebird:
     specifier: ^3.7.2
     version: 3.7.2
@@ -35,6 +38,12 @@ dependencies:
   twitter-text:
     specifier: ^3.1.0
     version: 3.1.0
+  xmlserializer:
+    specifier: ^0.6.1
+    version: 0.6.1
+  xpath:
+    specifier: ^0.0.34
+    version: 0.0.34
 
 devDependencies:
   '@ianvs/prettier-plugin-sort-imports':
@@ -2954,6 +2963,11 @@ packages:
 
   /@vue/shared@3.3.4:
     resolution: {integrity: sha512-7OjdcV8vQ74eiz1TZLzZP4JwqM5fA94K6yntPS5Z25r9HDuGNzaGdgvwKYq6S+MxwF0TFRwe50fIR/MYnakdkQ==}
+    dev: false
+
+  /@xmldom/xmldom@0.8.10:
+    resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
+    engines: {node: '>=10.0.0'}
     dev: false
 
   /abortcontroller-polyfill@1.7.5:
@@ -6393,6 +6407,15 @@ packages:
 
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
+    dev: false
+
+  /xmlserializer@0.6.1:
+    resolution: {integrity: sha512-FNb0eEqqUUbnuvxuHqNuKH8qCGKqxu+558Zi8UzOoQk8Z9LdvpONK+v7m3gpKVHrk5Aq+0nNLsKxu/6OYh7Umw==}
+    dev: false
+
+  /xpath@0.0.34:
+    resolution: {integrity: sha512-FxF6+rkr1rNSQrhUNYrAFJpRXNzlDoMxeXN5qI84939ylEv3qqPFKa85Oxr6tDaJKqwW6KKyo2v26TSv3k6LeA==}
+    engines: {node: '>=0.6.0'}
     dev: false
 
   /xxhash-wasm@0.4.2:
