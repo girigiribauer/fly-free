@@ -42,7 +42,10 @@ export const getStyle = () => {
 }
 
 export const config: PlasmoCSConfig = {
-  matches: ['https://twitter.com/intent/tweet*', 'https://x.com/intent/tweet*'],
+  matches: [
+    'https://twitter.com/intent/post?ff=1*',
+    'https://x.com/intent/post?ff=1*',
+  ],
   run_at: 'document_end',
 }
 
