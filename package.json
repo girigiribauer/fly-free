@@ -10,7 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@atproto/api": "^0.6.11",
+    "@atproto/api": "^0.10.1",
     "@xmldom/xmldom": "^0.8.10",
     "bluebird": "^3.7.2",
     "buffer": "^6.0.3",
