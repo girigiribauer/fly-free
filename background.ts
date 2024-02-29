@@ -2,13 +2,13 @@ import * as Promise from 'bluebird'
 
 import type { Draft } from '~/models/Draft'
 import { convertDraft2Post, type Post } from '~/models/Post'
+import type { PostMessageState } from '~/models/PostMessageState'
 import type { Preference } from '~/models/Preference'
 import type { ProcessMessage } from '~/models/ProcessMessage'
 import { load } from '~/models/Store'
 import { post as postBluesky } from '~/services/Bluesky'
-import type { PostMessageState } from '~models/PostMessageState'
 
-const TwitterTweetURL = 'https://twitter.com/intent/tweet'
+const TwitterTweetURL = 'https://twitter.com/intent/post'
 
 chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
   const getWindowURL = (
@@ -16,12 +16,17 @@ chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
     text: string | undefined,
     url: string | undefined,
   ) => {
-    if (!text || !url) return origin
-
     const urlParams = new URLSearchParams({
-      text,
-      url,
+      ff: '1',
     })
+
+    if (text) {
+      urlParams.append('text', text)
+    }
+    if (url) {
+      urlParams.append('url', url)
+    }
+
     return `${origin}?${urlParams}`
   }
 
