@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@atproto/api':
-    specifier: ^0.6.11
-    version: 0.6.11
+    specifier: ^0.10.1
+    version: 0.10.1
   '@xmldom/xmldom':
     specifier: ^0.8.10
     version: 0.8.10
@@ -92,20 +92,21 @@ packages:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.19
 
-  /@atproto/api@0.6.11:
-    resolution: {integrity: sha512-Nupk6l6UTxpcDKKRUW4HhZqOwvovNSOmuQHjhD9NQlU6ukVjwSF4LNtVhtzRrnBzUj/DPiLCl32aO0bw6dbnSA==}
+  /@atproto/api@0.10.1:
+    resolution: {integrity: sha512-yYb20+54MV1qDWyleRXPHqP2sFZdZh7c+W5cCEtZBDoGFDZQo4qOamy8P1arZGVh/vTz4Ho2aM+kdnxkv3/Gsw==}
     dependencies:
-      '@atproto/common-web': 0.2.0
-      '@atproto/lexicon': 0.2.1
-      '@atproto/syntax': 0.1.0
-      '@atproto/xrpc': 0.3.0
+      '@atproto/common-web': 0.2.3
+      '@atproto/lexicon': 0.3.1
+      '@atproto/syntax': 0.1.5
+      '@atproto/xrpc': 0.4.1
       multiformats: 9.9.0
       tlds: 1.242.0
       typed-emitter: 2.1.0
+      zod: 3.22.2
     dev: false
 
-  /@atproto/common-web@0.2.0:
-    resolution: {integrity: sha512-ugKrT8CWf6PDsZ29VOhOCs5K4z9BAFIV7SxPXA+MHC7pINqQ+wyjIq+DtUI8kmUSce1dTqc/lMN1akf/W5whVQ==}
+  /@atproto/common-web@0.2.3:
+    resolution: {integrity: sha512-k9VKGYUqjsRlI3wS31XyCbeb2U7ddS4X/eFgzos2CE5rIbk/uQGyKH+0Jcn1JIwRkvI1BemyNuUVrS8Ok3wiuw==}
     dependencies:
       graphemer: 1.4.0
       multiformats: 9.9.0
@@ -113,32 +114,26 @@ packages:
       zod: 3.22.2
     dev: false
 
-  /@atproto/lexicon@0.2.1:
-    resolution: {integrity: sha512-r03gJ9g/hhfI4zHqQgS8HrWceXMhpkVSPNJw1DufpwGpISdaqO6WltdxUkdUQXl6htJmZq3QidnyWPXR5dOtWg==}
+  /@atproto/lexicon@0.3.1:
+    resolution: {integrity: sha512-yLy6GUNP4pn0mGUIyUHvN0UeBza0S03AgjTXVR6KliC4ut2+7SjNMe4cI4G1M8/bJMaccC6ooQSm2kvwiOdr3A==}
     dependencies:
-      '@atproto/common-web': 0.2.0
-      '@atproto/syntax': 0.1.1
+      '@atproto/common-web': 0.2.3
+      '@atproto/syntax': 0.1.5
       iso-datestring-validator: 2.2.2
       multiformats: 9.9.0
       zod: 3.22.2
     dev: false
 
-  /@atproto/syntax@0.1.0:
-    resolution: {integrity: sha512-Ktui0qvIXt1o1Px1KKC0eqn69MfRHQ9ok5EwjcxIEPbJ8OY5XqkeyJneFDIWRJZiR6vqPHfjFYRUpTB+jNPfRQ==}
+  /@atproto/syntax@0.1.5:
+    resolution: {integrity: sha512-pbY5lOnThoAbsmrdbN9LC/dNmckfqODJiX9zjW2t3BIHYFeGBc6w9bK3Vre8A0Hg8yWkQpv6gaBLu+ykgi2DJQ==}
     dependencies:
-      '@atproto/common-web': 0.2.0
+      '@atproto/common-web': 0.2.3
     dev: false
 
-  /@atproto/syntax@0.1.1:
-    resolution: {integrity: sha512-R3ZbDcA1Ax9yu81uReRcrsmCknqBjqTI+3zuNYS8gNEh0m0OUqJyR4+xSDwrSjE4NDOs1nT93HP+WrimENkihg==}
+  /@atproto/xrpc@0.4.1:
+    resolution: {integrity: sha512-EMRGiu6oDvFL03Hk2rG/WCL3QK0GjZs9psH80JVf8z2nfdsGON6yn0hw3jvRB26CBXqi58U8Uicyq8Ej5pVTAA==}
     dependencies:
-      '@atproto/common-web': 0.2.0
-    dev: false
-
-  /@atproto/xrpc@0.3.0:
-    resolution: {integrity: sha512-PYE/4GT/sS4s/FxR5QO2YBaLU6GdhraYVfMOtfj+AN8YgZw1QoMHXkAv4v+BVH4T5HWU2XwZEBZvwfsr7YcewA==}
-    dependencies:
-      '@atproto/lexicon': 0.2.1
+      '@atproto/lexicon': 0.3.1
       zod: 3.22.2
     dev: false
 
