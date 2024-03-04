@@ -4,15 +4,15 @@ import type { Preference } from '~/models/Preference'
 
 const storageKeyTwitter = `${StorageIdentifier}_Twitter`
 const storageKeyBluesky = `${StorageIdentifier}_Bluesky`
+const storageKeyGlobal = `${StorageIdentifier}_Global`
 const storageKeyTemporary = `${StorageIdentifier}_Temporary`
 
 export const PreferenceDefaults: Preference = Object.freeze<Preference>({
-  twitterEnabled: true,
   twitterPaused: false,
-  blueskyEnabled: true,
   blueskyPaused: false,
   blueskyUsername: '',
   blueskyPassword: '',
+  globalAutoclosing: false,
 })
 
 let pref: Preference = Object.assign({}, PreferenceDefaults)
@@ -22,11 +22,13 @@ export const load = async (): Promise<Preference> => {
   const loaded = await chrome.storage.local.get([
     storageKeyTwitter,
     storageKeyBluesky,
+    storageKeyGlobal,
   ])
 
   const loadedPref: Partial<Preference> = {
     ...loaded[storageKeyTwitter],
     ...loaded[storageKeyBluesky],
+    ...loaded[storageKeyGlobal],
   }
 
   pref = Object.assign({}, PreferenceDefaults, loadedPref)
@@ -38,14 +40,15 @@ export const load = async (): Promise<Preference> => {
 export const save = async (pref: Preference): Promise<void> => {
   const saveObject = {
     [storageKeyTwitter]: {
-      twitterEnabled: pref.twitterEnabled,
       twitterPaused: pref.twitterPaused,
     },
     [storageKeyBluesky]: {
-      blueskyEnabled: pref.blueskyEnabled,
       blueskyPaused: pref.blueskyPaused,
       blueskyUsername: pref.blueskyUsername,
       blueskyPassword: pref.blueskyPassword,
+    },
+    [storageKeyGlobal]: {
+      globalAutoclosing: pref.globalAutoclosing,
     },
   }
 

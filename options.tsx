@@ -43,11 +43,6 @@ const OptionsPage = () => {
         <h2 className={style.blockTitle}>
           <SocialMediaIcon media="Twitter" type="Valid" />
           <span>Twitter</span>
-          <ToggleButton
-            id="TwitterEnabled"
-            state={pref.twitterEnabled}
-            handleToggle={(s) => handleUpdate('twitterEnabled', s)}
-          />
         </h2>
 
         <div className={style.blockContent}>
@@ -76,11 +71,6 @@ const OptionsPage = () => {
         <h2 className={style.blockTitle}>
           <SocialMediaIcon media="Bluesky" type="Valid" />
           <span>Bluesky</span>
-          <ToggleButton
-            id="BlueskyEnabled"
-            state={pref.blueskyEnabled}
-            handleToggle={(s) => handleUpdate('blueskyEnabled', s)}
-          />
         </h2>
 
         <div className={style.blockContent}>
@@ -148,6 +138,25 @@ const OptionsPage = () => {
           <p className={style.blockElementText}>
             Soon! (After Taittsuu Auth API release...)
           </p>
+        </div>
+      </div>
+
+      <div className={style.block}>
+        <h2 className={style.blockTitle}>Global preferences</h2>
+
+        <div className={style.blockContent}>
+          <div className={style.elementPair}>
+            <label className={style.elementKey} htmlFor="globalAutoclosing">
+              Auto closing
+            </label>
+            <div className={style.elementValue}>
+              <ToggleButton
+                id="GlobalAutoclosing"
+                state={pref.globalAutoclosing}
+                handleToggle={(s) => handleUpdate('globalAutoclosing', s)}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

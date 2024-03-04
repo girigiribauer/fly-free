@@ -5,12 +5,11 @@ import { checkValidation } from '~/services/Twitter'
 
 describe('checkValidation', () => {
   const pref: Preference = {
-    twitterEnabled: true,
     twitterPaused: false,
-    blueskyEnabled: true,
     blueskyPaused: false,
     blueskyUsername: 'xxx',
     blueskyPassword: 'xxx',
+    globalAutoclosing: false,
   }
 
   test('Invalid if no draft', () => {

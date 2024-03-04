@@ -88,10 +88,7 @@ const Overlay = () => {
     const validRecipients = delivery.recipients
       .filter(
         (r) =>
-          r.type === 'Writing' &&
-          r.postValidate.type === 'Valid' &&
-          r.enabled &&
-          !r.paused,
+          r.type === 'Writing' && r.postValidate.type === 'Valid' && !r.paused,
       )
       .map<PostMessageState>((r) => ({
         type: 'Posting',
@@ -134,14 +131,12 @@ const Overlay = () => {
       {
         type: 'Writing',
         recipient: 'Twitter',
-        enabled: pref.twitterEnabled,
         paused: pref.twitterPaused,
         postValidate: checkValidationTwitter(draft, pref),
       },
       {
         type: 'Writing',
         recipient: 'Bluesky',
-        enabled: pref.blueskyEnabled,
         paused: pref.blueskyPaused,
         postValidate: checkValidationBluesky(draft, pref),
       },
@@ -155,7 +150,6 @@ const Overlay = () => {
           (r) =>
             r.type === 'Writing' &&
             r.postValidate.type === 'Valid' &&
-            r.enabled &&
             !r.paused,
         )
         .map((r) => r.recipient),
@@ -224,6 +218,10 @@ const Overlay = () => {
     [delivery],
   )
 
+  const handleClose = useCallback(() => {
+    window.close()
+  }, [])
+
   // TODO: improvement
   useEffect(() => {
     chrome.runtime.onMessage.addListener(handleReceiveMessage)
@@ -279,7 +277,10 @@ const Overlay = () => {
     <>
       <div className={style.header}>
         <div className={style.recipientsArea}>
-          <ReloadButton disabled={!isBeforePost} />
+          <ReloadButton
+            disabled={!isBeforePost}
+            handleReload={() => location.reload()}
+          />
           {isBeforePost ? (
             <RecipientList
               recipients={recipients}
@@ -303,7 +304,11 @@ const Overlay = () => {
           </a>
         </div>
       </div>
-      <DeliveryView delivery={delivery} />
+      <DeliveryView
+        delivery={delivery}
+        isAutoclosing={pref.globalAutoclosing}
+        handleClose={handleClose}
+      />
     </>
   )
 }
