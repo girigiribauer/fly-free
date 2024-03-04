@@ -10,27 +10,34 @@ import { post as postBluesky } from '~/services/Bluesky'
 
 const TwitterTweetURL = 'https://twitter.com/intent/post'
 
-chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
-  const getWindowURL = (
-    origin: string,
-    text: string | undefined,
-    url: string | undefined,
-  ) => {
-    const urlParams = new URLSearchParams({
-      ff: '1',
-    })
+const getURLWithQuery = (
+  origin: string,
+  text: string | undefined,
+  url: string | undefined,
+  isForceBlank: boolean,
+) => {
+  const urlParams = new URLSearchParams({
+    ff: '1',
+  })
 
-    if (text) {
-      urlParams.append('text', text)
-    }
-    if (url) {
-      urlParams.append('url', url)
-    }
-
+  if (isForceBlank) {
     return `${origin}?${urlParams}`
   }
 
-  const url = getWindowURL(TwitterTweetURL, tab.title, tab.url)
+  if (text) {
+    urlParams.append('text', text)
+  }
+  if (url) {
+    urlParams.append('url', url)
+  }
+
+  return `${origin}?${urlParams}`
+}
+
+chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
+  const pref = await load()
+  const isForceBlank = pref.globalForceblank
+  const url = getURLWithQuery(TwitterTweetURL, tab.title, tab.url, isForceBlank)
 
   await chrome.windows.create({
     url,

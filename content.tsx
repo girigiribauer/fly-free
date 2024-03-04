@@ -279,6 +279,7 @@ const Overlay = () => {
         <div className={style.recipientsArea}>
           <ReloadButton
             disabled={!isBeforePost}
+            forceBlank={pref.globalForceblank}
             handleReload={() => location.reload()}
           />
           {isBeforePost ? (

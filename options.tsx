@@ -157,6 +157,18 @@ const OptionsPage = () => {
               />
             </div>
           </div>
+          <div className={style.elementPair}>
+            <label className={style.elementKey} htmlFor="globalForceblank">
+              Force blank
+            </label>
+            <div className={style.elementValue}>
+              <ToggleButton
+                id="GlobalForceblank"
+                state={pref.globalForceblank}
+                handleToggle={(s) => handleUpdate('globalForceblank', s)}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

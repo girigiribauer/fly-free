@@ -13,6 +13,7 @@ export const PreferenceDefaults: Preference = Object.freeze<Preference>({
   blueskyUsername: '',
   blueskyPassword: '',
   globalAutoclosing: false,
+  globalForceblank: false,
 })
 
 let pref: Preference = Object.assign({}, PreferenceDefaults)
@@ -49,6 +50,7 @@ export const save = async (pref: Preference): Promise<void> => {
     },
     [storageKeyGlobal]: {
       globalAutoclosing: pref.globalAutoclosing,
+      globalForceblank: pref.globalForceblank,
     },
   }
 
