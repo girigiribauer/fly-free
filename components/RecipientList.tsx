@@ -18,7 +18,6 @@ export const RecipientList = ({
   const getIconType: (recipient: PostMessageState) => SocialMediaIconType =
     useCallback((recipient) => {
       if (recipient.type !== 'Writing') return 'Initial'
-      if (!recipient.enabled) return 'Paused'
       if (recipient.paused) return 'Paused'
 
       return recipient.postValidate.type
@@ -30,7 +29,7 @@ export const RecipientList = ({
         if (recipient.type !== 'Writing') {
           return null
         }
-        const { enabled, paused, recipient: name } = recipient
+        const { paused, recipient: name } = recipient
         return (
           <li key={name} onClick={() => handleSwitch(name, !paused)}>
             <SocialMediaIcon type={getIconType(recipient)} media={name} />

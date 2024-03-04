@@ -5,12 +5,12 @@ import { checkValidation } from '~/services/Taittsuu'
 
 describe('checkValidation', () => {
   const pref: Preference = {
-    twitterEnabled: true,
     twitterPaused: false,
-    blueskyEnabled: true,
     blueskyPaused: false,
     blueskyUsername: 'xxx',
     blueskyPassword: 'xxx',
+    globalAutoclosing: false,
+    globalForceblank: false,
   }
 
   test('Paused in any case', () => {

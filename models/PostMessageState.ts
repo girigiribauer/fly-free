@@ -16,7 +16,6 @@ export type PostMessageStateInitial = {
 export type PostMessageStateWriting = {
   type: 'Writing'
   recipient: SocialMedia
-  enabled: boolean
   paused: boolean
   postValidate: PostValidateState
 }

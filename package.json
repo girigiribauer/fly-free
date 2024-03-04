@@ -1,7 +1,7 @@
 {
   "name": "fly-free",
   "displayName": "FlyFree",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "A crosspost tool for SNS to Fly Free!",
   "author": "girigiribauer",
   "scripts": {
@@ -54,6 +54,7 @@
           "assets/icon-paused.svg",
           "assets/icon-external.svg",
           "assets/icon-refresh.svg",
+          "assets/icon-blank.svg",
           "assets/toggle-on.svg",
           "assets/toggle-off.svg",
           "options.html"
