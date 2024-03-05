@@ -157,8 +157,8 @@
 /**
  * Maintain editor height for operating emoji popup
  */
-:global(div:has(> div > [data-testid="tweetTextarea_0_label"])) {
-  min-height: 230px !important;
+:global(div:has(> div > div > div > [data-testid="toolBar"])>div:first-child) {
+  min-height: 247px !important;
 }
 
 /**
