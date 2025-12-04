@@ -1,1 +1,1 @@
-export type SocialMedia = 'Twitter' | 'Bluesky' | 'Taittsuu'
+export type SocialMedia = 'Twitter' | 'Bluesky'

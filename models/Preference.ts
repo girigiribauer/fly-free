@@ -5,4 +5,5 @@ export type Preference = {
   blueskyPassword: string
   globalAutoclosing: boolean
   globalForceblank: boolean
+  dryRun: boolean
 }

@@ -2,13 +2,13 @@ import { useCallback, useRef } from 'react'
 
 import { SocialMediaIcon } from '~/components/SocialMediaIcon'
 import { ToggleButton } from '~/components/ToggleButton'
-import { useStore } from '~/hooks/useStore'
+import { usePreference } from '~/hooks/usePreference'
 import { debounce } from '~/libs/debounce'
 import { updateStore } from '~/models/Store'
-import style from '~/options.module.css'
+import style from './options.module.css'
 
-const OptionsPage = () => {
-  const pref = useStore()
+const Options = () => {
+  const pref = usePreference()
   const updatedRef = useRef<HTMLElement>()
 
   const showUpdatedFeedback = useCallback(
@@ -129,19 +129,6 @@ const OptionsPage = () => {
       </div>
 
       <div className={style.block}>
-        <h2 className={style.blockTitle}>
-          <SocialMediaIcon media="Taittsuu" type="Valid" />
-          <span>Taittsu</span>
-        </h2>
-
-        <div className={style.blockContent}>
-          <p className={style.blockElementText}>
-            Soon! (After Taittsuu Auth API release...)
-          </p>
-        </div>
-      </div>
-
-      <div className={style.block}>
         <h2 className={style.blockTitle}>Global preferences</h2>
 
         <div className={style.blockContent}>
@@ -201,4 +188,4 @@ const OptionsPage = () => {
   )
 }
 
-export default OptionsPage
+export default Options

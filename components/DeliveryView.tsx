@@ -49,7 +49,7 @@ export const DeliveryView = ({
     }
 
     return () => {
-      clearInterval(timer)
+      clearTimeout(timer)
     }
   }, [count, delivery, isAutoclosing, handleClose])
 
@@ -99,6 +99,23 @@ export const DeliveryView = ({
       </ul>
       {count !== null ? (
         <p className={style.autoclosing}>Auto closing: {count}</p>
+      ) : null}
+      {process.env.NODE_ENV === 'development' ? (
+        <div style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          background: 'rgba(0,0,0,0.8)',
+          color: 'white',
+          padding: '8px',
+          fontSize: '12px',
+          zIndex: 9999
+        }}>
+          <p>Type: {type}</p>
+          <p>AutoClosing: {String(isAutoclosing)}</p>
+          <p>AllSuccess: {String(delivery.recipients.every((r) => r.type === 'Success'))}</p>
+          <p>Count: {count}</p>
+        </div>
       ) : null}
     </div>
   )

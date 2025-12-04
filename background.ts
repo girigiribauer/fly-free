@@ -6,7 +6,7 @@ import type { PostMessageState } from '~/models/PostMessageState'
 import type { Preference } from '~/models/Preference'
 import type { ProcessMessage } from '~/models/ProcessMessage'
 import { load } from '~/models/Store'
-import { post as postBluesky } from '~/services/Bluesky'
+import { postToBluesky } from '~/infrastructures/BlueskyRepository'
 
 const TwitterTweetURL = 'https://twitter.com/intent/post'
 
@@ -64,11 +64,10 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
 
       switch (recipient) {
         case 'Bluesky':
-          post = postBluesky
+          post = postToBluesky
           break
-        case 'Taittsuu':
-          // TODO: after Taittsuu API
-          throw new Error('unimplemented')
+        default:
+          throw new Error(`Unknown recipient: ${recipient}`)
       }
 
       const result: string | Error = await post(postData, pref).catch(
@@ -102,5 +101,5 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
     await chrome.tabs.sendMessage(tabID, twitterMessage)
   }
 
-  chrome.runtime.onMessage.removeListener(() => {})
+  chrome.runtime.onMessage.removeListener(() => { })
 })
