@@ -49,7 +49,16 @@ chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
 
 chrome.runtime.onMessage.addListener(async (request, sender) => {
   const receivedMessage = request as ProcessMessage
-  if (!receivedMessage || receivedMessage.type !== 'Post') return
+  if (!receivedMessage) return
+
+  if (receivedMessage.type === 'CloseWindow') {
+    if (sender.tab?.id) {
+      chrome.tabs.remove(sender.tab.id)
+    }
+    return
+  }
+
+  if (receivedMessage.type !== 'Post') return
 
   const { draft, recipients } = receivedMessage
   const tabID = sender.tab.id

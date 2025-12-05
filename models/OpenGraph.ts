@@ -26,7 +26,13 @@ export const parse = async (linkcardURL: string): Promise<OpenGraph | null> => {
 
   const ast = Parser.parse<DefaultTreeAdapterMap>(html)
   const xhtml = serializeToString(ast)
-  let document = new DOMParser().parseFromString(xhtml)
+  let document = new DOMParser({
+    errorHandler: {
+      warning: () => { },
+      error: () => { },
+      fatalError: (e) => console.error(e),
+    },
+  }).parseFromString(xhtml)
 
   const charset = parseCharset(document)
 
@@ -35,7 +41,13 @@ export const parse = async (linkcardURL: string): Promise<OpenGraph | null> => {
     const decodedAST = Parser.parse<DefaultTreeAdapterMap>(decodedHTML)
     const decodedXHTML = serializeToString(decodedAST)
 
-    document = new DOMParser().parseFromString(decodedXHTML)
+    document = new DOMParser({
+      errorHandler: {
+        warning: () => { },
+        error: () => { },
+        fatalError: (e) => console.error(e),
+      },
+    }).parseFromString(decodedXHTML)
   }
 
   const title = parseTitle(document)

@@ -8,6 +8,7 @@ import {
     updateRecipientsWithMessage,
 } from '~/libs/deliveryStateLogic'
 import { captureDraft, queryFromUnstableDOM } from '~/libs/twitterDOM'
+import { cleanDraftText } from '~/models/Draft'
 import type { Draft } from '~/models/Draft'
 import type {
     DeliveryAgentState,
@@ -148,12 +149,54 @@ export const useDeliveryAgent = (draft: Draft | null, pref: Preference) => {
         })()
     }, [draft, pref])
 
+    // Timeout handling
+    useEffect(() => {
+        if (delivery.type !== 'OnDelivery') return
+
+        const timeoutId = setTimeout(() => {
+            setDelivery((prev) => {
+                if (prev.type !== 'OnDelivery') return prev
+
+                const hasPosting = prev.recipients.some((r) => r.type === 'Posting')
+                if (!hasPosting) return prev
+
+                const updatedRecipients = prev.recipients.map((r) => {
+                    if (r.type === 'Posting') {
+                        return {
+                            ...r,
+                            type: 'Error',
+                            error: 'Timeout',
+                        } as PostMessageState
+                    }
+                    return r
+                })
+
+                let newDeliveryAgent:
+                    | DeliveryAgentStateOnDelivery
+                    | DeliveryAgentStateDelivered = {
+                    type: 'OnDelivery',
+                    recipients: updatedRecipients,
+                }
+
+                if (shouldTransitionToDelivered(updatedRecipients)) {
+                    newDeliveryAgent = {
+                        ...newDeliveryAgent,
+                        type: 'Delivered',
+                    }
+                }
+
+                return newDeliveryAgent
+            })
+        }, 15000) // 15 seconds timeout
+
+        return () => clearTimeout(timeoutId)
+    }, [delivery.type])
+
     const handleSubmit = useCallback(() => {
         if (delivery.type !== 'Writing') return
 
         // Sentences are cut off in the middle (only Bluesky)
-        const currentDraft = captureDraft(queryFromUnstableDOM())
-        if (!currentDraft) return
+        if (!draft) return
 
         // Use 'recipients' from useMemo which is calculated based on current state
         const validRecipientNames = filterValidRecipients(recipients)
@@ -183,6 +226,12 @@ export const useDeliveryAgent = (draft: Draft | null, pref: Preference) => {
             return
         }
         // -------------------------------------------------------------------------
+
+        const currentDraft: Draft = {
+            text: cleanDraftText(draft.text),
+            imageURLs: draft.imageURLs,
+            linkcardURL: draft.linkcardURL,
+        }
 
         const message: ProcessMessage = {
             type: 'Post',

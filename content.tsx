@@ -1,11 +1,11 @@
 import type { PlasmoCSConfig } from 'plasmo'
-import { useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { ComposerHeader } from '~/components/ComposerHeader'
 import { DeliveryView } from '~/components/DeliveryView'
 import { useDraftScanner } from '~/hooks/orchestrator/useDraftScanner'
 import { useReplaceTitle } from '~/hooks/useReplaceTitle'
-import { useResizeAndReload } from '~/hooks/useResizeAndReload'
+import { useWindowControl } from '~/hooks/useWindowControl'
 import { usePreference } from '~/hooks/usePreference'
 import { useDeliveryAgent } from '~/hooks/useDeliveryAgent'
 import { useRecipientSwitch } from '~/hooks/useRecipientSwitch'
@@ -31,15 +31,22 @@ const Overlay = () => {
   const { draft } = useDraftScanner(containerRef, submitRef)
 
   useReplaceTitle()
-  useResizeAndReload()
+
+  // Initial text state
+  const [initialText, setInitialText] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (draft && initialText === null) {
+      setInitialText(draft.text)
+    }
+  }, [draft, initialText])
 
   const { delivery, recipients, validRecipients, handleSubmit } = useDeliveryAgent(draft, pref)
 
   const { handleSwitch } = useRecipientSwitch()
 
-  const handleClose = useCallback(() => {
-    window.close()
-  }, [])
+  // Use new window control hook (handles resize and closing)
+  const { handleClose } = useWindowControl(initialText)
 
   return (
     <>
@@ -56,6 +63,7 @@ const Overlay = () => {
       />
       <DeliveryView
         delivery={delivery}
+        draft={draft}
         isAutoclosing={pref.globalAutoclosing}
         handleClose={handleClose}
       />
