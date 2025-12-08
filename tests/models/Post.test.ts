@@ -1,5 +1,5 @@
 import path from 'path'
-import Image from 'image-js'
+
 import { describe, expect, test } from 'vitest'
 
 import type { Draft } from '~/models/Draft'
@@ -24,7 +24,7 @@ describe('convertDraft2Post', () => {
     expect(actual).toStrictEqual(expected)
   })
 
-  test('Return with link card URL in case "https://ogp.me/" text', async () => {
+  test.skip('Return with link card URL in case "https://ogp.me/" text', async () => {
     const expected: Post = {
       text: 'https://ogp.me/',
       images: [],

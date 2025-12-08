@@ -67,11 +67,16 @@ export const postToBluesky = async (
             ...postContent,
             embed: {
                 $type: 'app.bsky.embed.images',
-                images: uploadResponses.map((uploadResponse) => {
+                images: uploadResponses.map((uploadResponse, index) => {
+                    const image = images[index]
                     return {
                         // TODO: customize Twitter UI
                         alt: '',
                         image: uploadResponse.data.blob,
+                        aspectRatio: {
+                            width: image.width,
+                            height: image.height,
+                        },
                     }
                 }),
             },
