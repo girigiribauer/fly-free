@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import type { SocialMedia } from '~/models/SocialMedia'
-import { getSnapshot, updateStore } from '~/stores/PreferenceStore'
+import { updateStore } from '~/stores/PreferenceStore'
 
 export const useRecipientSwitch = () => {
     const handleSwitch = useCallback(

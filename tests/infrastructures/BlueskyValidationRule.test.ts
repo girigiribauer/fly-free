@@ -1,7 +1,8 @@
 import { describe, expect, test } from 'vitest'
 
 import type { Preference } from '~/models/Preference'
-import { checkValidation } from '~/services/Bluesky'
+import { blueskyValidationRule } from '~/infrastructures/BlueskyValidationRule'
+const checkValidation = blueskyValidationRule.validate
 
 describe('checkValidation', () => {
   const pref: Preference = {
@@ -10,36 +11,31 @@ describe('checkValidation', () => {
     blueskyUsername: 'xxx',
     blueskyPassword: 'xxx',
     globalAutoclosing: false,
+
     globalForceblank: false,
+    dryRun: false,
   }
 
   test('Invalid if no draft', () => {
-    const expected = {
-      type: 'Invalid',
-      errors: ['no draft'],
-    }
     const actual = checkValidation(undefined, pref)
-
-    expect(actual).toStrictEqual(expected)
+    expect(actual).toStrictEqual({
+      type: 'Invalid',
+      errors: [{ type: 'NoDraft' }],
+    })
   })
 
   test('Invalid if zero characters and no image', () => {
-    const expected = {
-      type: 'Invalid',
-      errors: ['no text'],
-    }
     const actual = checkValidation(
       { text: '', imageURLs: [], linkcardURL: null },
       pref,
     )
-
-    expect(actual).toStrictEqual(expected)
+    expect(actual).toStrictEqual({
+      type: 'Invalid',
+      errors: [{ type: 'NoText' }],
+    })
   })
 
   test('Valid if zero characters and one image', () => {
-    const expected = {
-      type: 'Valid',
-    }
     const actual = checkValidation(
       {
         text: '',
@@ -48,26 +44,22 @@ describe('checkValidation', () => {
       },
       pref,
     )
-
-    expect(actual).toStrictEqual(expected)
+    expect(actual).toStrictEqual({
+      type: 'Valid',
+    })
   })
 
   test('Valid if one character and no image', () => {
-    const expected = {
-      type: 'Valid',
-    }
     const actual = checkValidation(
       { text: 'a', imageURLs: [], linkcardURL: null },
       pref,
     )
-
-    expect(actual).toStrictEqual(expected)
+    expect(actual).toStrictEqual({
+      type: 'Valid',
+    })
   })
 
   test('Valid if 300 characters and no image', () => {
-    const expected = {
-      type: 'Valid',
-    }
     const actual = checkValidation(
       {
         text: Array.from({ length: 300 }, () => 'a').join(''),
@@ -76,15 +68,12 @@ describe('checkValidation', () => {
       },
       pref,
     )
-
-    expect(actual).toStrictEqual(expected)
+    expect(actual).toStrictEqual({
+      type: 'Valid',
+    })
   })
 
   test('Invalid if 301 characters and no image', () => {
-    const expected = {
-      type: 'Invalid',
-      errors: ['parse invalid'],
-    }
     const actual = checkValidation(
       {
         text: Array.from({ length: 301 }, () => 'a').join(''),
@@ -93,14 +82,14 @@ describe('checkValidation', () => {
       },
       pref,
     )
-
-    expect(actual).toStrictEqual(expected)
+    expect(actual).toStrictEqual({
+      type: 'Invalid',
+      // The current BlueskyValidationRule returns 'TextTooLong' with maxLength
+      errors: [{ type: 'TextTooLong', maxLength: 300 }],
+    })
   })
 
   test('Valid if 300 multibyte characters and no image', () => {
-    const expected = {
-      type: 'Valid',
-    }
     const actual = checkValidation(
       {
         text: Array.from({ length: 300 }, () => 'あ').join(''),
@@ -109,15 +98,12 @@ describe('checkValidation', () => {
       },
       pref,
     )
-
-    expect(actual).toStrictEqual(expected)
+    expect(actual).toStrictEqual({
+      type: 'Valid',
+    })
   })
 
   test('Invalid if 301 multibyte characters and no image', () => {
-    const expected = {
-      type: 'Invalid',
-      errors: ['parse invalid'],
-    }
     const actual = checkValidation(
       {
         text: Array.from({ length: 301 }, () => 'あ').join(''),
@@ -126,15 +112,13 @@ describe('checkValidation', () => {
       },
       pref,
     )
-
-    expect(actual).toStrictEqual(expected)
+    expect(actual).toStrictEqual({
+      type: 'Invalid',
+      errors: [{ type: 'TextTooLong', maxLength: 300 }],
+    })
   })
 
   test('Invalid if username, password is empty string', () => {
-    const expected = {
-      type: 'Invalid',
-      errors: ['no username or password'],
-    }
     const actual = checkValidation(
       {
         text: 'test123',
@@ -143,8 +127,10 @@ describe('checkValidation', () => {
       },
       Object.assign({}, pref, { blueskyUsername: '' }),
     )
-
-    expect(actual).toStrictEqual(expected)
+    expect(actual).toStrictEqual({
+      type: 'Invalid',
+      errors: [{ type: 'NoCredentials' }],
+    })
   })
 
   test.todo('case long URL')

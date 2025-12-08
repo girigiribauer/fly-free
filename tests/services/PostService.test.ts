@@ -1,5 +1,3 @@
-import path from 'path'
-
 import { describe, expect, test } from 'vitest'
 
 import type { Draft } from '~/models/Draft'

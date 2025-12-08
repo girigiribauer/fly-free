@@ -5,8 +5,6 @@ import Gif from '@jimp/js-gif'
 // Force CommonJS import to ensure compatibility with bundles
 import { methods as resizeMethods } from '@jimp/plugin-resize/dist/commonjs/index.js'
 
-
-
 // Cast to any to bypass strict plugin type check that fails with CJS import
 const plugins = [{ methods: resizeMethods }] as any
 

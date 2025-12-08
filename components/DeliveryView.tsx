@@ -1,11 +1,11 @@
 import iconExternal from 'data-base64:~/assets/icon-external.svg'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import style from '~/components/DeliveryView.module.css'
 import { SocialMediaIcon } from '~/components/SocialMediaIcon'
 import type { SocialMediaIconType } from '~/components/SocialMediaIcon'
 import type { DeliveryAgentState } from '~/models/DeliveryAgentState'
-import { cleanDraftText } from '~/models/Draft'
+import { cleanDraftText } from '~/libs/DraftUtils'
 import type { Draft } from '~/models/Draft'
 
 export type DeliveryViewProps = {

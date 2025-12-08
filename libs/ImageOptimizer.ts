@@ -13,16 +13,16 @@ export const optimizePostImage = async (
 
     // Load image with jimp (using ArrayBuffer)
     // slice() creates a copy to ensure we have a clean ArrayBuffer of just this image
-    const jimpImage = await Jimp.read(image.binary.slice().buffer)
+    const jimpImage = await Jimp.read(Buffer.from(image.binary.slice().buffer))
 
     // Step 1: Resize to 2000px if needed (maintaining aspect ratio)
     const maxDimension = Math.max(jimpImage.bitmap.width, jimpImage.bitmap.height)
     if (maxDimension > MAX_DIMENSION) {
         const scale = MAX_DIMENSION / maxDimension
-        jimpImage.resize({
-            w: Math.floor(jimpImage.bitmap.width * scale),
-            h: Math.floor(jimpImage.bitmap.height * scale)
-        })
+        jimpImage.resize(
+            Math.floor(jimpImage.bitmap.width * scale),
+            Math.floor(jimpImage.bitmap.height * scale)
+        )
         // console.log('[ImageOptimizer] Step 1 - Resized to 2000px: ...')
     }
 
@@ -36,13 +36,14 @@ export const optimizePostImage = async (
     while (maxQuality - minQuality > 1) {
         const quality = Math.round((minQuality + maxQuality) / 2)
 
-        const buffer = await jimpImage.getBuffer('image/jpeg', { quality })
+        // jimpImage.quality(quality)
+        const buffer = await jimpImage.getBuffer('image/jpeg', { quality } as any)
 
         // console.log(`[ImageOptimizer] Quality ${quality}%: ...`)
 
         if (buffer.length <= MAX_FILE_SIZE) {
             minQuality = quality
-            bestResult = { buffer, quality }
+            bestResult = { buffer: new Uint8Array(buffer), quality }
         } else {
             maxQuality = quality
         }
@@ -55,7 +56,7 @@ export const optimizePostImage = async (
     // console.log('[ImageOptimizer] Final result: ...')
 
     return {
-        binary: new Uint8Array(bestResult.buffer),
+        binary: bestResult.buffer,
         mimetype: 'image/jpeg',
         width: jimpImage.bitmap.width,
         height: jimpImage.bitmap.height,

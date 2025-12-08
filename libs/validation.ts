@@ -2,7 +2,9 @@ import type { Draft } from '~/models/Draft'
 import type { Preference } from '~/models/Preference'
 import type { PostValidateState } from '~/models/PostValidateState'
 import type { SocialMedia } from '~/models/SocialMedia'
+import type { ValidationError } from '~/models/ValidationError'
 import { blueskyValidationRule } from '~/infrastructures/BlueskyValidationRule'
+
 import { twitterValidationRule } from '~/infrastructures/TwitterValidationRule'
 
 /**
@@ -26,5 +28,22 @@ export const computeValidationResults = (
     return {
         Twitter: twitterValidationRule.validate(draft, pref),
         Bluesky: blueskyValidationRule.validate(draft, pref),
+    }
+}
+
+export const getErrorMessage = (error: ValidationError): string => {
+    switch (error.type) {
+        case 'NoDraft':
+            return 'Draft is empty'
+        case 'NoText':
+            return 'Text is empty'
+        case 'NoCredentials':
+            return 'Not logged in'
+        case 'TextTooLong':
+            return `Text too long (max ${error.maxLength})`
+        case 'ParseInvalid':
+            return 'Parse failed'
+        default:
+            return 'Unknown error'
     }
 }

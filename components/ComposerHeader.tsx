@@ -6,7 +6,7 @@ import { ReloadButton } from '~/components/ReloadButton'
 import { SubmitButton } from '~/components/SubmitButton'
 import style from '~/content.module.css'
 
-type ComposerHeaderProps = {
+export type ComposerHeaderProps = {
     submitRef: React.RefObject<HTMLButtonElement>
     delivery: DeliveryAgentState
     recipients: PostMessageState[]

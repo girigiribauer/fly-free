@@ -1,9 +1,7 @@
-
 import { useCallback } from 'react'
 
-import { captureDraft, queryFromUnstableDOM } from '~/libs/twitterDOM'
 import { SelectorTweetButton } from '~/definitions'
-import { backupDelivery, updateStore } from '~/stores/PreferenceStore'
+import { backupDelivery } from '~/stores/PreferenceStore'
 import type { Draft } from '~/models/Draft'
 import type { RecipientState } from '~/models/RecipientState'
 import type { PostMessageState } from '~/models/PostMessageState'

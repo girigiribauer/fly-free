@@ -18,6 +18,7 @@ const mockPref: Preference = {
     blueskyPaused: false,
     blueskyUsername: '',
     blueskyPassword: '',
+    dryRun: false,
 }
 
 const mockDraft: Draft = {

@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import type { Draft } from '~/models/Draft'
 import type { Preference } from '~/models/Preference'
 import type { PostingStatus } from '~/models/PostingStatus'
 import type { RecipientState } from '~/models/RecipientState'
-import { restoreDelivery, save, updateStore } from '~/stores/PreferenceStore'
+import { restoreDelivery } from '~/stores/PreferenceStore'
 
 /**
  * 初期状態の復元と Draft 検出を行うフック

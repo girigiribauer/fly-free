@@ -7,7 +7,7 @@ import {
     shouldTransitionToDelivered,
     updateRecipientsWithMessage,
 } from '~/libs/deliveryStateLogic'
-import { cleanDraftText } from '~/models/Draft'
+import { cleanDraftText } from '~/libs/DraftUtils'
 import type { Draft } from '~/models/Draft'
 import type {
     DeliveryAgentState,
