@@ -4,7 +4,7 @@ import type { Draft } from '~/models/Draft'
 import type { Preference } from '~/models/Preference'
 import type { PostingStatus } from '~/models/PostingStatus'
 import type { RecipientState } from '~/models/RecipientState'
-import { restoreDelivery } from '~/models/Store'
+import { restoreDelivery, save, updateStore } from '~/stores/PreferenceStore'
 
 /**
  * 初期状態の復元と Draft 検出を行うフック
@@ -36,7 +36,7 @@ export const useInitialState = (
             if (restored) {
                 // 復元された状態を recipients にセット
                 setRecipients(
-                    restored.map((r) =>
+                    restored.recipients.map((r) =>
                         r.recipient === 'Twitter'
                             ? {
                                 type: 'Success',

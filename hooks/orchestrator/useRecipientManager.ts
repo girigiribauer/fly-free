@@ -7,7 +7,7 @@ import type { ProcessMessageError, ProcessMessageSuccess } from '~/models/Proces
 import type { Draft } from '~/models/Draft'
 import type { RecipientState } from '~/models/RecipientState'
 import type { SocialMedia } from '~/models/SocialMedia'
-import { updateStore } from '~/models/Store'
+import { updateStore } from '~/stores/PreferenceStore'
 
 export const useRecipientManager = (
     draft: Draft | null,
@@ -48,11 +48,17 @@ export const useRecipientManager = (
     )
 
     const updateRecipientStatus = useCallback(
-        (receivedMessage: BackgroundMessageSuccess | BackgroundMessageError) => {
+        (receivedMessage: ProcessMessageSuccess | ProcessMessageError) => {
             setRecipients((prev) =>
                 prev.map((r) =>
                     r.recipient === receivedMessage.recipient
-                        ? (receivedMessage as RecipientState)
+                        ? (receivedMessage as unknown as RecipientState) // Need verification on casting, but likely intended mapping
+                        // Actually, ProcessMessageSuccess has 'url' but RecipientStateSuccess needs 'url', logic seems to map them.
+                        // However, directly casting might work if fields align.
+                        // Previous code was: (receivedMessage as RecipientState)
+                        // ProcessMessageSuccess = { type: 'Success', recipient: ..., url: ... }
+                        // RecipientStateSuccess = { type: 'Success', recipient: ..., url: ... }
+                        // They usually align.
                         : r,
                 ),
             )

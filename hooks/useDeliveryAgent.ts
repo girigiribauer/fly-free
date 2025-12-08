@@ -7,7 +7,6 @@ import {
     shouldTransitionToDelivered,
     updateRecipientsWithMessage,
 } from '~/libs/deliveryStateLogic'
-import { captureDraft, queryFromUnstableDOM } from '~/libs/twitterDOM'
 import { cleanDraftText } from '~/models/Draft'
 import type { Draft } from '~/models/Draft'
 import type {
@@ -19,7 +18,7 @@ import type { PostMessageState } from '~/models/PostMessageState'
 import type { Preference } from '~/models/Preference'
 import type { ProcessMessage } from '~/models/ProcessMessage'
 import type { SocialMedia } from '~/models/SocialMedia'
-import { backupDelivery, restoreDelivery } from '~/models/Store'
+import { backupDelivery, restoreDelivery } from '~/stores/PreferenceStore'
 
 export const useDeliveryAgent = (draft: Draft | null, pref: Preference) => {
     const [delivery, setDelivery] = useState<DeliveryAgentState>({

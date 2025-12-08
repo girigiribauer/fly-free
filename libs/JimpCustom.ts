@@ -1,6 +1,7 @@
 import { createJimp } from '@jimp/core'
 import Jpeg from '@jimp/js-jpeg'
 import Png from '@jimp/js-png'
+import Gif from '@jimp/js-gif'
 // Force CommonJS import to ensure compatibility with bundles
 import { methods as resizeMethods } from '@jimp/plugin-resize/dist/commonjs/index.js'
 
@@ -10,7 +11,7 @@ import { methods as resizeMethods } from '@jimp/plugin-resize/dist/commonjs/inde
 const plugins = [{ methods: resizeMethods }] as any
 
 export const Jimp = createJimp({
-    formats: [Jpeg, Png],
+    formats: [Jpeg, Png, Gif],
     plugins: plugins,
 })
 

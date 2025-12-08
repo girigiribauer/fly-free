@@ -10,7 +10,7 @@ import { usePreference } from '~/hooks/usePreference'
 import { useDeliveryAgent } from '~/hooks/useDeliveryAgent'
 import { useRecipientSwitch } from '~/hooks/useRecipientSwitch'
 import { getContentStyle } from '~/libs/contentStyles'
-import { updateStore } from '~/models/Store'
+import { updateStore } from '~/stores/PreferenceStore'
 
 export const getStyle = getContentStyle
 

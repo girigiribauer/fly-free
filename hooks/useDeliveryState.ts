@@ -17,7 +17,7 @@ import type { PostMessageState } from '~/models/PostMessageState'
 import type { Preference } from '~/models/Preference'
 import type { ProcessMessage } from '~/models/ProcessMessage'
 import type { SocialMedia } from '~/models/SocialMedia'
-import { backupDelivery, restoreDelivery } from '~/models/Store'
+import { backupDelivery, restoreDelivery } from '~/stores/PreferenceStore'
 
 export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
     const [delivery, setDelivery] = useState<DeliveryAgentState>({

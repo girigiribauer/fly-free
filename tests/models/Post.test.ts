@@ -3,7 +3,8 @@ import path from 'path'
 import { describe, expect, test } from 'vitest'
 
 import type { Draft } from '~/models/Draft'
-import { convertDraft2Post, type Post } from '~/models/Post'
+import type { Post } from '~/models/Post'
+import { convertDraft2Post } from '~/services/PostService'
 import { ogpSiteImage } from '~/tests/resources/ogpmeSiteImage'
 
 describe('convertDraft2Post', () => {

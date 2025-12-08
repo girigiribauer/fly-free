@@ -4,7 +4,7 @@ import { SocialMediaIcon } from '~/components/SocialMediaIcon'
 import { ToggleButton } from '~/components/ToggleButton'
 import { usePreference } from '~/hooks/usePreference'
 import { debounce } from '~/libs/debounce'
-import { updateStore } from '~/models/Store'
+import { updateStore } from '~/stores/PreferenceStore'
 import style from './options.module.css'
 
 const Options = () => {
