@@ -1,7 +1,7 @@
 {
   "name": "fly-free",
   "displayName": "FlyFree",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "A crosspost tool for SNS to Fly Free!",
   "author": "girigiribauer",
   "scripts": {
@@ -16,7 +16,7 @@
     "buffer": "^6.0.3",
     "jimp": "^1.6.0",
     "parse5": "^7.1.2",
-    "plasmo": "0.84.0",
+    "plasmo": "0.84.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "twitter-text": "^3.1.0",
@@ -45,6 +45,7 @@
     "vitest-chrome": "^0.1.0"
   },
   "manifest": {
+    "default_locale": "en",
     "permissions": [
       "storage"
     ],
@@ -54,7 +55,6 @@
           "assets/icon.png",
           "assets/icon-twitter.svg",
           "assets/icon-bluesky.svg",
-          "assets/icon-taittsuu.svg",
           "assets/icon-caution.svg",
           "assets/icon-success.svg",
           "assets/icon-paused.svg",

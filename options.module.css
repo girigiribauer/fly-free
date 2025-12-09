@@ -96,7 +96,7 @@
   padding-right: 80px;
 }
 
-.elementValue > input {
+.elementValue>input {
   width: 100%;
   padding: 2px 4px;
   border: 1px solid var(--color-mono2);
@@ -110,7 +110,7 @@
   padding-left: 20px;
 }
 
-.blockElementList > li {
+.blockElementList>li {
   font-size: 16px;
 }
 
@@ -133,7 +133,16 @@
   opacity: 0;
   visibility: hidden;
 }
+
 .updatedFeedback:global(.active) {
   opacity: 1;
   visibility: visible;
+}
+
+.textBlock {
+  margin: 0 0 40px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-mono4);
+  white-space: pre-wrap;
 }

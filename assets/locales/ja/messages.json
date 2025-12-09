@@ -1,0 +1,89 @@
+{
+    "optionsTitle": {
+        "message": "FlyFree 設定"
+    },
+    "twitterLoginNote": {
+        "message": "Xにログインした状態で使う必要があります"
+    },
+    "paused": {
+        "message": "一時停止"
+    },
+    "blueskyAppPasswordNote": {
+        "message": "App Password の設定が必要です"
+    },
+    "username": {
+        "message": "ユーザー名"
+    },
+    "password": {
+        "message": "パスワード"
+    },
+    "globalPreferences": {
+        "message": "全体設定"
+    },
+    "autoClosing": {
+        "message": "自動クローズ"
+    },
+    "forceBlank": {
+        "message": "白紙投稿"
+    },
+    "links": {
+        "message": "リンク"
+    },
+    "repository": {
+        "message": "リポジトリ (GitHub)"
+    },
+    "extensionPage": {
+        "message": "Chrome ウェブストア"
+    },
+    "updated": {
+        "message": "updated!"
+    },
+    "posting": {
+        "message": "投稿中..."
+    },
+    "success": {
+        "message": "成功！"
+    },
+    "error": {
+        "message": "エラー..."
+    },
+    "autoClosingCount": {
+        "message": "自動クローズまで: "
+    },
+    "copyToClipboard": {
+        "message": "クリップボードにコピー"
+    },
+    "copied": {
+        "message": "コピーしました！"
+    },
+    "appPasswords": {
+        "message": "App Passwords"
+    },
+    "crosspost": {
+        "message": "クロスポスト"
+    },
+    "crossposting": {
+        "message": "クロスポスト中"
+    },
+    "crossposted": {
+        "message": "クロスポスト完了"
+    },
+    "options": {
+        "message": "オプション"
+    },
+    "reload": {
+        "message": "再読み込み"
+    },
+    "dryRunMode": {
+        "message": "ドライランモード"
+    },
+    "enabled": {
+        "message": "有効"
+    },
+    "description": {
+        "message": "X (Twitter) の投稿画面を利用して、Bluesky にも同時に投稿（クロスポスト）できるツールです。\nBluesky 単体への投稿も可能です。\n\nX (Twitter) が利用できない状態では動作しませんので、あらかじめご了承ください。"
+    },
+    "maintenanceNote": {
+        "message": "開発者は既に X (Twitter) を利用していないため、今後の新規機能追加は予定していません。\nまた、App Password から OAuth への移行など、大規模な改修も行われない可能性があります。\n\nご理解のほどお願いいたします。"
+    }
+}
