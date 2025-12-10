@@ -2,13 +2,13 @@ import { useCallback, useRef } from 'react'
 
 import { SocialMediaIcon } from '~/components/SocialMediaIcon'
 import { ToggleButton } from '~/components/ToggleButton'
-import { useStore } from '~/hooks/useStore'
+import { usePreference } from '~/hooks/usePreference'
 import { debounce } from '~/libs/debounce'
-import { updateStore } from '~/models/Store'
-import style from '~/options.module.css'
+import { updateStore } from '~/stores/PreferenceStore'
+import style from './options.module.css'
 
-const OptionsPage = () => {
-  const pref = useStore()
+const Options = () => {
+  const pref = usePreference()
   const updatedRef = useRef<HTMLElement>()
 
   const showUpdatedFeedback = useCallback(
@@ -36,31 +36,34 @@ const OptionsPage = () => {
     <main className={style.main}>
       <h1 className={style.mainTitle}>
         <img src="/assets/icon.png" alt="FlyFree" width="40" height="40" />
-        <span>FlyFree Preferences</span>
+        <span>{chrome.i18n.getMessage('optionsTitle')}</span>
       </h1>
+      <p className={style.textBlock}>
+        {chrome.i18n.getMessage('description')}
+      </p>
 
       <div className={style.block}>
         <h2 className={style.blockTitle}>
           <SocialMediaIcon media="Twitter" type="Valid" />
-          <span>Twitter</span>
+          <span>X(Twitter)</span>
         </h2>
 
         <div className={style.blockContent}>
           <p className={style.elementText}>
-            <span>You just login at </span>
-            <a href="https://twitter.com/login" target="_blank">
-              Twitter
+            <span>{chrome.i18n.getMessage('twitterLoginNote')}</span><br />
+            <a href="https://x.com/login" target="_blank">
+              X(Twitter)
             </a>
           </p>
           <div className={style.elementPair}>
             <label className={style.elementKey} htmlFor="TwitterPaused">
-              Paused
+              {chrome.i18n.getMessage('enabled')}
             </label>
             <div className={style.elementValue}>
               <ToggleButton
                 id="TwitterPaused"
-                state={pref.twitterPaused}
-                handleToggle={(s) => handleUpdate('twitterPaused', s)}
+                state={!pref.twitterPaused}
+                handleToggle={(s) => handleUpdate('twitterPaused', !s)}
               />
             </div>
           </div>
@@ -75,26 +78,26 @@ const OptionsPage = () => {
 
         <div className={style.blockContent}>
           <p className={style.elementText}>
-            <span>You must use </span>
+            <span>{chrome.i18n.getMessage('blueskyAppPasswordNote')}</span><br />
             <a href="https://bsky.app/settings/app-passwords" target="_blank">
-              App Passwords
+              {chrome.i18n.getMessage('appPasswords')}
             </a>
           </p>
           <div className={style.elementPair}>
             <label className={style.elementKey} htmlFor="BlueskyPaused">
-              Paused
+              {chrome.i18n.getMessage('enabled')}
             </label>
             <div className={style.elementValue}>
               <ToggleButton
                 id="BlueskyPaused"
-                state={pref.blueskyPaused}
-                handleToggle={(s) => handleUpdate('blueskyPaused', s)}
+                state={!pref.blueskyPaused}
+                handleToggle={(s) => handleUpdate('blueskyPaused', !s)}
               />
             </div>
           </div>
           <div className={style.elementPair}>
             <label className={style.elementKey} htmlFor="blueskyUsername">
-              Username
+              {chrome.i18n.getMessage('username')}
             </label>
             <div className={style.elementValue}>
               <input
@@ -111,7 +114,7 @@ const OptionsPage = () => {
           </div>
           <div className={style.elementPair}>
             <label className={style.elementKey} htmlFor="blueskyPassword">
-              Password
+              {chrome.i18n.getMessage('password')}
             </label>
             <div className={style.elementValue}>
               <input
@@ -129,25 +132,12 @@ const OptionsPage = () => {
       </div>
 
       <div className={style.block}>
-        <h2 className={style.blockTitle}>
-          <SocialMediaIcon media="Taittsuu" type="Valid" />
-          <span>Taittsu</span>
-        </h2>
-
-        <div className={style.blockContent}>
-          <p className={style.blockElementText}>
-            Soon! (After Taittsuu Auth API release...)
-          </p>
-        </div>
-      </div>
-
-      <div className={style.block}>
-        <h2 className={style.blockTitle}>Global preferences</h2>
+        <h2 className={style.blockTitle}>{chrome.i18n.getMessage('globalPreferences')}</h2>
 
         <div className={style.blockContent}>
           <div className={style.elementPair}>
             <label className={style.elementKey} htmlFor="globalAutoclosing">
-              Auto closing
+              {chrome.i18n.getMessage('autoClosing')}
             </label>
             <div className={style.elementValue}>
               <ToggleButton
@@ -159,7 +149,7 @@ const OptionsPage = () => {
           </div>
           <div className={style.elementPair}>
             <label className={style.elementKey} htmlFor="globalForceblank">
-              Force blank
+              {chrome.i18n.getMessage('forceBlank')}
             </label>
             <div className={style.elementValue}>
               <ToggleButton
@@ -173,7 +163,7 @@ const OptionsPage = () => {
       </div>
 
       <div className={style.block}>
-        <h2 className={style.blockTitle}>Links</h2>
+        <h2 className={style.blockTitle}>{chrome.i18n.getMessage('links')}</h2>
 
         <div className={style.blockContent}>
           <ul className={style.blockElementList}>
@@ -181,19 +171,31 @@ const OptionsPage = () => {
               <a
                 href="https://github.com/girigiribauer/fly-free"
                 target="_blank">
-                Repository (GitHub)
+                {chrome.i18n.getMessage('repository')}
               </a>
             </li>
             <li>
               <a
                 href="https://chrome.google.com/webstore/detail/flyfree/mjlfkhenobdjdonefhdbpigopndgeogm"
                 target="_blank">
-                Extension Page
+                {chrome.i18n.getMessage('extensionPage')}
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://bsky.app/profile/girigiribauer.com"
+                target="_blank">
+                @girigiribauer.com
               </a>
             </li>
           </ul>
         </div>
       </div>
+
+      <p className={style.textBlock}>
+        {chrome.i18n.getMessage('maintenanceNote')}
+      </p>
+
       <span ref={updatedRef} className={style.updatedFeedback}>
         updated!
       </span>
@@ -201,4 +203,4 @@ const OptionsPage = () => {
   )
 }
 
-export default OptionsPage
+export default Options

@@ -32,14 +32,16 @@ export const captureDraft = (doms: DraftDOMs): Draft | null => {
     return null
   }
 
-  const newText = [...textarea.querySelectorAll('[data-block="true"]')]
+  const blocks = Array.from(textarea.querySelectorAll('[data-block="true"]'))
+  const newText = blocks
+    .filter((b) => !blocks.some((parent) => parent !== b && parent.contains(b)))
     .map((b) => b.textContent)
     .join('\n')
   const newImages = attachments
     ? Array.from(
-        attachments.querySelectorAll(SelectorDroppedImage),
-        (elem: HTMLImageElement) => elem.src,
-      )
+      attachments.querySelectorAll(SelectorDroppedImage),
+      (elem: HTMLImageElement) => elem.src,
+    )
     : []
 
   return createDraft(newText, newImages)

@@ -2,7 +2,6 @@ import iconBluesky from 'data-base64:~/assets/icon-bluesky.svg'
 import iconCaution from 'data-base64:~/assets/icon-caution.svg'
 import iconPause from 'data-base64:~/assets/icon-paused.svg'
 import iconSuccess from 'data-base64:~/assets/icon-success.svg'
-import iconTaittsuu from 'data-base64:~/assets/icon-taittsuu.svg'
 import iconTwitter from 'data-base64:~/assets/icon-twitter.svg'
 
 import style from '~/components/SocialMediaIcon.module.css'
@@ -24,7 +23,6 @@ export const SocialMediaIcon = ({ media, type }: SocialMediaIconProps) => {
   const iconURLs: { [key in SocialMedia]: string } = {
     Twitter: iconTwitter,
     Bluesky: iconBluesky,
-    Taittsuu: iconTaittsuu,
   }
   const statusClasses: { [key in SocialMediaIconType]: string } = {
     Initial: style.initial,

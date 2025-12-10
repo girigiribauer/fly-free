@@ -1,43 +1,16 @@
-import * as Promise from 'bluebird'
 
 import type { Draft } from '~/models/Draft'
-import { convertDraft2Post, type Post } from '~/models/Post'
-import type { PostMessageState } from '~/models/PostMessageState'
-import type { Preference } from '~/models/Preference'
+import { convertDraft2Post } from '~/services/PostService'
 import type { ProcessMessage } from '~/models/ProcessMessage'
-import { load } from '~/models/Store'
-import { post as postBluesky } from '~/services/Bluesky'
+import { load } from '~/stores/PreferenceStore'
+import { DeliveryService } from '~/services/DeliveryService'
 
-const TwitterTweetURL = 'https://twitter.com/intent/post'
-
-const getURLWithQuery = (
-  origin: string,
-  text: string | undefined,
-  url: string | undefined,
-  isForceBlank: boolean,
-) => {
-  const urlParams = new URLSearchParams({
-    ff: '1',
-  })
-
-  if (isForceBlank) {
-    return `${origin}?${urlParams}`
-  }
-
-  if (text) {
-    urlParams.append('text', text)
-  }
-  if (url) {
-    urlParams.append('url', url)
-  }
-
-  return `${origin}?${urlParams}`
-}
+import { getTwitterIntentURL } from '~/libs/TwitterURLBuilder'
 
 chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
   const pref = await load()
   const isForceBlank = pref.globalForceblank
-  const url = getURLWithQuery(TwitterTweetURL, tab.title, tab.url, isForceBlank)
+  const url = getTwitterIntentURL(tab.title, tab.url, isForceBlank)
 
   await chrome.windows.create({
     url,
@@ -49,7 +22,16 @@ chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
 
 chrome.runtime.onMessage.addListener(async (request, sender) => {
   const receivedMessage = request as ProcessMessage
-  if (!receivedMessage || receivedMessage.type !== 'Post') return
+  if (!receivedMessage) return
+
+  if (receivedMessage.type === 'CloseWindow') {
+    if (sender.tab?.id) {
+      chrome.tabs.remove(sender.tab.id)
+    }
+    return
+  }
+
+  if (receivedMessage.type !== 'Post') return
 
   const { draft, recipients } = receivedMessage
   const tabID = sender.tab.id
@@ -57,50 +39,8 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
   const postData = await convertDraft2Post(draftObj)
   const pref = await load()
 
-  await Promise.mapSeries(
-    recipients.filter(({ recipient }) => recipient !== 'Twitter'),
-    async ({ recipient }: PostMessageState) => {
-      let post: (post: Post, pref: Preference) => Promise<string>
+  const service = new DeliveryService()
+  await service.deliver(postData, recipients, pref, tabID)
 
-      switch (recipient) {
-        case 'Bluesky':
-          post = postBluesky
-          break
-        case 'Taittsuu':
-          // TODO: after Taittsuu API
-          throw new Error('unimplemented')
-      }
-
-      const result: string | Error = await post(postData, pref).catch(
-        (error: Error) => {
-          return error
-        },
-      )
-
-      let message: ProcessMessage
-      if (result instanceof Error) {
-        message = {
-          type: 'Error',
-          recipient,
-          error: result.message,
-        }
-      } else {
-        message = {
-          type: 'Success',
-          recipient,
-          url: result,
-        }
-      }
-      await chrome.tabs.sendMessage(tabID, message)
-    },
-  )
-
-  if (recipients.some(({ recipient }) => recipient === 'Twitter')) {
-    const twitterMessage: ProcessMessage = {
-      type: 'Tweet',
-    }
-    await chrome.tabs.sendMessage(tabID, twitterMessage)
-  }
-
-  chrome.runtime.onMessage.removeListener(() => {})
+  chrome.runtime.onMessage.removeListener(() => { })
 })

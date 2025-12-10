@@ -1,7 +1,7 @@
 {
   "name": "fly-free",
   "displayName": "FlyFree",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "A crosspost tool for SNS to Fly Free!",
   "author": "girigiribauer",
   "scripts": {
@@ -14,23 +14,29 @@
     "@xmldom/xmldom": "^0.8.10",
     "bluebird": "^3.7.2",
     "buffer": "^6.0.3",
-    "image-dimensions": "^2.3.0",
-    "image-js": "^0.35.5",
+    "jimp": "^1.6.0",
     "parse5": "^7.1.2",
-    "plasmo": "0.84.0",
+    "plasmo": "0.84.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "twitter-text": "^3.1.0",
     "xmlserializer": "^0.6.1",
-    "xpath": "^0.0.34"
+    "xpath": "^0.0.34",
+    "zod": "3.23.8"
+  },
+  "alias": {
+    "fs": "./mocks/fs.ts"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.1.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/chrome": "0.0.245",
     "@types/node": "20.5.9",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@types/twitter-text": "^3.1.6",
+    "happy-dom": "^20.0.11",
     "mem-storage-area": "^1.0.3",
     "msw": "^2.1.5",
     "prettier": "3.0.3",
@@ -39,6 +45,7 @@
     "vitest-chrome": "^0.1.0"
   },
   "manifest": {
+    "default_locale": "en",
     "permissions": [
       "storage"
     ],
@@ -48,7 +55,6 @@
           "assets/icon.png",
           "assets/icon-twitter.svg",
           "assets/icon-bluesky.svg",
-          "assets/icon-taittsuu.svg",
           "assets/icon-caution.svg",
           "assets/icon-success.svg",
           "assets/icon-paused.svg",

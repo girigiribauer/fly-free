@@ -1,0 +1,89 @@
+{
+    "optionsTitle": {
+        "message": "FlyFree Preferences"
+    },
+    "twitterLoginNote": {
+        "message": "You just login at X(Twitter)."
+    },
+    "paused": {
+        "message": "Paused"
+    },
+    "blueskyAppPasswordNote": {
+        "message": "You must use "
+    },
+    "username": {
+        "message": "Username"
+    },
+    "password": {
+        "message": "Password"
+    },
+    "globalPreferences": {
+        "message": "Global preferences"
+    },
+    "autoClosing": {
+        "message": "Auto closing"
+    },
+    "forceBlank": {
+        "message": "Empty draft"
+    },
+    "links": {
+        "message": "Links"
+    },
+    "repository": {
+        "message": "Repository (GitHub)"
+    },
+    "extensionPage": {
+        "message": "Extension Page"
+    },
+    "updated": {
+        "message": "updated!"
+    },
+    "posting": {
+        "message": "Posting..."
+    },
+    "success": {
+        "message": "Success!"
+    },
+    "error": {
+        "message": "Error..."
+    },
+    "autoClosingCount": {
+        "message": "Auto closing: "
+    },
+    "copyToClipboard": {
+        "message": "Copy to clipboard"
+    },
+    "copied": {
+        "message": "Copied!"
+    },
+    "appPasswords": {
+        "message": "App Passwords"
+    },
+    "crosspost": {
+        "message": "Crosspost"
+    },
+    "crossposting": {
+        "message": "Crossposting"
+    },
+    "crossposted": {
+        "message": "Crossposted"
+    },
+    "options": {
+        "message": "Options"
+    },
+    "reload": {
+        "message": "Reload"
+    },
+    "dryRunMode": {
+        "message": "Dry Run Mode"
+    },
+    "enabled": {
+        "message": "Enabled"
+    },
+    "description": {
+        "message": "This tool allows you to crosspost to Bluesky using the X (Twitter) posting UI.\nYou can also post to Bluesky individually.\n\nPlease note that this extension will not work if X (Twitter) is unavailable."
+    },
+    "maintenanceNote": {
+        "message": "The developer no longer uses X (Twitter), so no new features are planned.\nMajor updates, such as migrating from App Passwords to OAuth, are also unlikely to be implemented.\n\nThank you for your understanding."
+    }
+}

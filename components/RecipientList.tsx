@@ -9,11 +9,15 @@ import type { SocialMedia } from '~/models/SocialMedia'
 export type RecipientListProps = {
   recipients: PostMessageState[]
   handleSwitch: (recipient: SocialMedia, paused: boolean) => void
+  dryRun?: boolean
+  handleDryRunChange?: (checked: boolean) => void
 }
 
 export const RecipientList = ({
   recipients,
   handleSwitch,
+  dryRun,
+  handleDryRunChange,
 }: RecipientListProps) => {
   const getIconType: (recipient: PostMessageState) => SocialMediaIconType =
     useCallback((recipient) => {
@@ -36,6 +40,17 @@ export const RecipientList = ({
           </li>
         )
       })}
+      {process.env.NODE_ENV === 'development' && handleDryRunChange ? (
+        <li>
+          <input
+            type="checkbox"
+            checked={dryRun}
+            onChange={(e) => handleDryRunChange(e.target.checked)}
+            title="Dry Run Mode"
+            style={{ margin: '0 8px', cursor: 'pointer' }}
+          />
+        </li>
+      ) : null}
     </ul>
   )
 }

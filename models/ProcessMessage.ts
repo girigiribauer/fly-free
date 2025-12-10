@@ -9,6 +9,7 @@ export type ProcessMessage =
   | ProcessMessageSuccess
   | ProcessMessageError
   | ProcessMessageTweet
+  | ProcessMessageCloseWindow
 
 export type ProcessMessagePost = {
   type: 'Post'
@@ -23,3 +24,8 @@ export type ProcessMessageError = PostMessageStateError
 export type ProcessMessageTweet = {
   type: 'Tweet'
 }
+
+export type ProcessMessageCloseWindow = {
+  type: 'CloseWindow'
+}
+
