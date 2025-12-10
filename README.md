@@ -26,14 +26,14 @@ A crosspost tool for SNS to Fly Free!
 ## Install
 
 - git clone
-- `pnpm i`
+- `npm i`
 
 ## Testing
 
-- `pnpm test`
+- `npm test`
 
 ## Develop
 
-- `pnpm dev`
+- `npm run dev`
 - open Browser Extension Page
 - enable FlyFree (for Dev)
