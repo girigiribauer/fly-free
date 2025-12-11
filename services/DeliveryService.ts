@@ -15,8 +15,8 @@ export class DeliveryService {
         pref: Preference,
         tabID: number,
     ): Promise<void> {
-        // Sort recipients: API-based first, UI interactions (Twitter) last
-        // This sorting logic was previously implicit/manual in background.ts
+        console.log('[DEBUG-BG] DeliveryService.deliver called', { recipientsString: JSON.stringify(recipients) })
+        // X(Twitter) は必ず最後に投稿する
         const sortedRecipients = [...recipients].sort((a, b) => {
             if (a.recipient === 'Twitter') return 1
             if (b.recipient === 'Twitter') return -1
@@ -27,7 +27,6 @@ export class DeliveryService {
             sortedRecipients,
             async ({ recipient }: PostMessageState) => {
                 let poster: SNSPoster
-                let isAPIPost = true
 
                 switch (recipient) {
                     case 'Bluesky':
@@ -35,41 +34,28 @@ export class DeliveryService {
                         break
                     case 'Twitter':
                         poster = new TwitterPoster(tabID)
-                        isAPIPost = false
                         break
                     default:
                         console.warn(`Unknown recipient: ${recipient}`)
                         return
                 }
 
-                if (!isAPIPost) {
-                    // Twitter special handling: just send the message to trigger UI
-                    // The infrastructure/TwitterPoster could handle the messaging details too,
-                    // but sticking to the plan where DeliveryService manages the loop and feedback.
-                    // Actually, TwitterPoster implementation I wrote just returns string.
-                    // So we need to do the messaging here or inside TwitterPoster.
-
-                    // Let's rely on TwitterPoster to handle the "Action" conceptually,
-                    // but since TwitterPoster just checks nothing, we need to send the message here
-                    // OR move the messaging logic into TwitterPoster.
-
-                    // For now, let's keep the messaging logic here for Twitter as it was in background.ts
-                    // "if (recipients.some ... Twitter) ... chrome.tabs.sendMessage"
-
-                    const twitterMessage: ProcessMessage = {
-                        type: 'Tweet',
-                    }
-                    await chrome.tabs.sendMessage(tabID, twitterMessage)
-                    return
+                // API型(Bluesky)は投稿実行、UI型(Twitter)はUI操作トリガーメッセージを送信
+                let result: string | Error
+                try {
+                    result = await poster.post(post, pref)
+                    console.log(`[DEBUG-BG] Post result for ${recipient}:`, result)
+                } catch (error) {
+                    console.error(`[DEBUG-BG] Error posting to ${recipient}:`, error)
+                    result = error as Error
                 }
 
-                // For API based posters
-                const result: string | Error = await poster.post(post, pref).catch(
-                    (error: Error) => {
-                        return error
-                    },
-                )
+                // Twitterの場合はここで終了
+                // (TwitterPoster.post がUIトリガーメッセージを既に送信しており、
+                //  その後の成功判定などのフローはContent Script側で完結するため)
+                if (recipient === 'Twitter') return
 
+                // API型の場合は、結果(成功/失敗)をContent Scriptへ通知する
                 let message: ProcessMessage
                 if (result instanceof Error) {
                     message = {

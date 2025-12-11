@@ -10,6 +10,7 @@ export type ProcessMessage =
   | ProcessMessageError
   | ProcessMessageTweet
   | ProcessMessageCloseWindow
+  | ProcessMessageLog
 
 export type ProcessMessagePost = {
   type: 'Post'
@@ -27,5 +28,10 @@ export type ProcessMessageTweet = {
 
 export type ProcessMessageCloseWindow = {
   type: 'CloseWindow'
+}
+
+export type ProcessMessageLog = {
+  type: 'Log'
+  payload: any
 }
 

@@ -74,14 +74,11 @@
     "reload": {
         "message": "再読み込み"
     },
-    "dryRunMode": {
-        "message": "ドライランモード"
-    },
     "enabled": {
         "message": "有効"
     },
     "description": {
-        "message": "X (Twitter) の投稿画面を利用して、Bluesky にも同時に投稿（クロスポスト）できるツールです。\nBluesky 単体への投稿も可能です。\n\nX (Twitter) が利用できない状態では動作しませんので、あらかじめご了承ください。"
+        "message": "FlyFree は X (Twitter) の投稿画面を利用して、Bluesky にも同時に投稿（クロスポスト）できるブラウザ拡張機能です。\nBluesky 単体への投稿も可能です。\n\nX (Twitter) が利用できない状態では動作しませんので、あらかじめご了承ください。"
     },
     "maintenanceNote": {
         "message": "開発者は既に X (Twitter) を利用していないため、今後の新規機能追加は予定していません。\nまた、App Password から OAuth への移行など、大規模な改修も行われない可能性があります。\n\nご理解のほどお願いいたします。"

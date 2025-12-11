@@ -54,7 +54,6 @@ describe('PreferenceRepository', () => {
             blueskyPassword: 'pass',
             globalAutoclosing: true,
             globalForceblank: true,
-            dryRun: true
         }
 
         await savePreference(pref)
@@ -69,7 +68,6 @@ describe('PreferenceRepository', () => {
         expect(store[KeyGlobal]).toEqual({
             globalAutoclosing: true,
             globalForceblank: true,
-            dryRun: true
         })
     })
 
@@ -78,14 +76,12 @@ describe('PreferenceRepository', () => {
         await mockAdapter.set({
             [KeyTwitter]: { twitterPaused: true },
             [KeyBluesky]: { blueskyPaused: true },
-            [KeyGlobal]: { dryRun: true }
         })
 
         const pref = await loadPreference()
 
         expect(pref.twitterPaused).toBe(true)
         expect(pref.blueskyPaused).toBe(true)
-        expect(pref.dryRun).toBe(true)
     })
 
     test('backupDeliveryState and restoreDeliveryState should persist and clear', async () => {

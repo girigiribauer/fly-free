@@ -18,7 +18,6 @@ const mockPref: Preference = {
     blueskyPaused: false,
     blueskyUsername: '',
     blueskyPassword: '',
-    dryRun: false,
 }
 
 const mockDraft: Draft = {
@@ -29,14 +28,14 @@ const mockDraft: Draft = {
 
 describe('deliveryStateLogic', () => {
     describe('calculateRecipients', () => {
-        it('should return Initial recipients when type is Initial', () => {
+        it('typeがInitialの場合、初期状態の送信先リストを返すべき', () => {
             const result = calculateRecipients('Initial', undefined, null, mockPref)
             expect(result).toHaveLength(2)
             expect(result[0]).toEqual({ type: 'Initial', recipient: 'Twitter' })
             expect(result[1]).toEqual({ type: 'Initial', recipient: 'Bluesky' })
         })
 
-        it('should return Writing recipients with validation when type is Writing', () => {
+        it('typeがWritingの場合、検証済みの送信先リストを返すべき', () => {
             const result = calculateRecipients('Writing', undefined, mockDraft, mockPref)
             expect(result).toHaveLength(2)
             expect(result[0].type).toBe('Writing')
@@ -48,7 +47,7 @@ describe('deliveryStateLogic', () => {
             expect(result[1].recipient).toBe('Bluesky')
         })
 
-        it('should return existing recipients for other types', () => {
+        it('その他のtypeの場合、既存の送信先リストをそのまま返すべき', () => {
             const existingRecipients: PostMessageState[] = [
                 { type: 'Posting', recipient: 'Twitter' },
             ]
@@ -63,7 +62,7 @@ describe('deliveryStateLogic', () => {
     })
 
     describe('filterValidRecipients', () => {
-        it('should filter valid and unpaused recipients', () => {
+        it('有効かつ一時停止されていない送信先のみをフィルタリングすべき', () => {
             const recipients: PostMessageState[] = [
                 {
                     type: 'Writing',
@@ -77,21 +76,36 @@ describe('deliveryStateLogic', () => {
                     paused: true, // Paused
                     postValidate: { type: 'Valid' },
                 },
-                {
-                    type: 'Writing',
-                    recipient: 'Taittsuu' as any,
-                    paused: false,
-                    postValidate: { type: 'Invalid', errors: [] }, // Invalid
-                },
             ]
 
             const result = filterValidRecipients(recipients)
             expect(result).toEqual(['Twitter'])
         })
+
+        it('検証エラー(Invalid)の送信先は除外すべき', () => {
+            const recipients: PostMessageState[] = [
+                {
+                    type: 'Writing',
+                    recipient: 'Twitter',
+                    paused: false,
+                    postValidate: { type: 'Valid' },
+                },
+                {
+                    type: 'Writing',
+                    recipient: 'Bluesky',
+                    paused: false,
+                    postValidate: { type: 'Invalid', errors: [{ type: 'NoText' }] },
+                },
+            ]
+
+            const result = filterValidRecipients(recipients)
+            expect(result).toEqual(['Twitter'])
+            expect(result).not.toEqual(['Bluesky'])
+        })
     })
 
     describe('shouldTransitionToDelivered', () => {
-        it('should return true if no recipients are Posting', () => {
+        it('Posting状態の送信先がいなければtrueを返すべき', () => {
             const recipients: PostMessageState[] = [
                 { type: 'Success', recipient: 'Twitter', url: '' },
                 { type: 'Error', recipient: 'Bluesky', error: '' },
@@ -99,7 +113,7 @@ describe('deliveryStateLogic', () => {
             expect(shouldTransitionToDelivered(recipients)).toBe(true)
         })
 
-        it('should return false if some recipients are Posting', () => {
+        it('Posting状態の送信先がいればfalseを返すべき', () => {
             const recipients: PostMessageState[] = [
                 { type: 'Success', recipient: 'Twitter', url: '' },
                 { type: 'Posting', recipient: 'Bluesky' },
@@ -109,7 +123,7 @@ describe('deliveryStateLogic', () => {
     })
 
     describe('updateRecipientsWithMessage', () => {
-        it('should update recipient status on Success message', () => {
+        it('Successメッセージ受信時、該当する送信先のステータスを更新すべき', () => {
             const currentRecipients: PostMessageState[] = [
                 { type: 'Posting', recipient: 'Twitter' },
                 { type: 'Posting', recipient: 'Bluesky' },
@@ -129,7 +143,7 @@ describe('deliveryStateLogic', () => {
             expect(result[1].type).toBe('Posting')
         })
 
-        it('should ignore unrelated messages', () => {
+        it('関係のないメッセージは無視すべき', () => {
             const currentRecipients: PostMessageState[] = [
                 { type: 'Posting', recipient: 'Twitter' },
             ]

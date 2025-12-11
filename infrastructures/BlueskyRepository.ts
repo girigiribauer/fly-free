@@ -32,6 +32,8 @@ export const postToBluesky = async (
     const { text, images, linkcard } = post
     const { blueskyUsername: username, blueskyPassword: password } = pref
 
+    console.log('[DEBUG-BG] postToBluesky called', { textSummary: text.slice(0, 20) })
+
     const agent = new BskyAgent({ service: 'https://bsky.social' })
     const loginResponse = await agent.login({
         identifier: username,
@@ -111,6 +113,8 @@ export const postToBluesky = async (
         }
     }
 
+    console.log('[DEBUG-BG] Ready to call agent.post')
     const result = await agent.post(postContent)
+    console.log('[DEBUG-BG] agent.post finished', { uri: result.uri })
     return convertBskyAppURL(result.uri, username)
 }

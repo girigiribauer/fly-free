@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "rm -rf build .plasmo && plasmo dev",
     "build": "plasmo build",
+    "package": "plasmo build --zip",
     "test": "vitest"
   },
   "dependencies": {
@@ -37,6 +38,7 @@
     "@types/react-dom": "18.2.7",
     "@types/twitter-text": "^3.1.6",
     "happy-dom": "^20.0.11",
+    "jsdom": "^27.3.0",
     "mem-storage-area": "^1.0.3",
     "msw": "^2.1.5",
     "prettier": "3.0.3",

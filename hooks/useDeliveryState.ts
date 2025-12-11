@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
-import { SelectorTweetButton } from '~/definitions'
 import {
     calculateRecipients,
     filterValidRecipients,
@@ -17,7 +16,6 @@ import type { PostMessageState } from '~/models/PostMessageState'
 import type { Preference } from '~/models/Preference'
 import type { ProcessMessage } from '~/models/ProcessMessage'
 import type { SocialMedia } from '~/models/SocialMedia'
-import { backupDelivery, restoreDelivery } from '~/stores/PreferenceStore'
 
 export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
     const [delivery, setDelivery] = useState<DeliveryAgentState>({
@@ -41,48 +39,25 @@ export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
         [recipients],
     )
 
-    const handleReceiveMessage = useCallback(
-        (message: unknown) => {
+    const updateFromMessage = useCallback(
+        (message: ProcessMessage) => {
             if (delivery.type !== 'OnDelivery') return
 
-            const receivedMessage = message as ProcessMessage
+            if (message.type !== 'Success' && message.type !== 'Error') return
+
+            const updatedRecipients = updateRecipientsWithMessage(
+                delivery.recipients,
+                message,
+            )
 
             let newDeliveryAgent:
                 | DeliveryAgentStateOnDelivery
-                | DeliveryAgentStateDelivered
-
-            switch (receivedMessage.type) {
-                case 'Success':
-                case 'Error':
-                    const updatedRecipients = updateRecipientsWithMessage(
-                        delivery.recipients,
-                        receivedMessage,
-                    )
-
-                    newDeliveryAgent = {
-                        type: 'OnDelivery',
-                        recipients: updatedRecipients,
-                    }
-                    break
-
-                case 'Tweet':
-                    const button = document.querySelector(
-                        SelectorTweetButton,
-                    ) as HTMLDivElement
-
-                        ; (async () => {
-                            await backupDelivery(delivery)
-                            button.click()
-                            // Don't reset state here - let auto-close handle it
-                        })()
-                    return  // Don't update delivery state
-
-                default:
-                    console.warn('mismatch message')
-                    return
+                | DeliveryAgentStateDelivered = {
+                type: 'OnDelivery',
+                recipients: updatedRecipients,
             }
 
-            if (shouldTransitionToDelivered(newDeliveryAgent.recipients)) {
+            if (shouldTransitionToDelivered(updatedRecipients)) {
                 newDeliveryAgent = {
                     ...newDeliveryAgent,
                     type: 'Delivered',
@@ -93,55 +68,49 @@ export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
         [delivery],
     )
 
-    // Message listener
-    useEffect(() => {
-        chrome.runtime.onMessage.addListener(handleReceiveMessage)
+    // For Timeout logic (updating Posting -> Error)
+    const updateTimeouts = useCallback(() => {
+        setDelivery((prev) => {
+            if (prev.type !== 'OnDelivery') return prev
 
-        return () => {
-            chrome.runtime.onMessage.removeListener(handleReceiveMessage)
-        }
-    }, [handleReceiveMessage])
+            const hasPosting = prev.recipients.some((r) => r.type === 'Posting')
+            if (!hasPosting) return prev
 
-    // Initialize or restore delivery state
-    useEffect(() => {
-        if (delivery.type !== 'Initial') return
+            const updatedRecipients = prev.recipients.map((r) => {
+                if (r.type === 'Posting') {
+                    return {
+                        ...r,
+                        type: 'Error',
+                        error: 'Timeout',
+                    } as PostMessageState
+                }
+                return r
+            })
 
-        void (async () => {
-            const restored = await restoreDelivery()
-
-            if (restored) {
-                setDelivery({
-                    type: 'Delivered',
-                    recipients: restored.recipients.map((r) =>
-                        r.recipient === 'Twitter'
-                            ? {
-                                type: 'Success',
-                                recipient: 'Twitter',
-                                url: 'https://twitter.com', // cannot post URL
-                            }
-                            : r,
-                    ),
-                })
-            } else if (draft) {
-                // Calculate recipients here to avoid dependency on recipients
-                const initialRecipients = calculateRecipients(
-                    'Writing',
-                    undefined,
-                    draft,
-                    pref,
-                )
-                setDelivery({
-                    type: 'Writing',
-                    recipients: initialRecipients,
-                })
+            let newDeliveryAgent:
+                | DeliveryAgentStateOnDelivery
+                | DeliveryAgentStateDelivered = {
+                type: 'OnDelivery',
+                recipients: updatedRecipients,
             }
-        })()
-    }, [draft, pref])
+
+            if (shouldTransitionToDelivered(updatedRecipients)) {
+                newDeliveryAgent = {
+                    ...newDeliveryAgent,
+                    type: 'Delivered',
+                }
+            }
+
+            return newDeliveryAgent
+        })
+    }, [])
 
     return {
         delivery,
         setDelivery,
         recipients,
         validRecipients,
+        updateFromMessage,
+        updateTimeouts
     }
 }

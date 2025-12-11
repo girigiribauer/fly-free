@@ -12,10 +12,10 @@ export type ComposerHeaderProps = {
     recipients: PostMessageState[]
     validRecipients: SocialMedia[]
     forceBlank: boolean
-    dryRun: boolean
     handleSwitch: (media: SocialMedia, paused: boolean) => Promise<void>
-    handleDryRunChange: (checked: boolean) => void
     handleSubmit: () => void
+    dryRun: boolean
+    handleDryRunChange: (checked: boolean) => void
 }
 
 export const ComposerHeader = ({
@@ -24,10 +24,10 @@ export const ComposerHeader = ({
     recipients,
     validRecipients,
     forceBlank,
-    dryRun,
     handleSwitch,
-    handleDryRunChange,
     handleSubmit,
+    dryRun,
+    handleDryRunChange,
 }: ComposerHeaderProps) => {
     const isBeforePost =
         delivery.type === 'Initial' || delivery.type === 'Writing'
@@ -42,12 +42,24 @@ export const ComposerHeader = ({
                 />
 
                 {isBeforePost ? (
-                    <RecipientList
-                        recipients={recipients}
-                        handleSwitch={handleSwitch}
-                        dryRun={dryRun}
-                        handleDryRunChange={handleDryRunChange}
-                    />
+                    <>
+                        <RecipientList
+                            recipients={recipients}
+                            handleSwitch={handleSwitch}
+                        />
+                        {process.env.NODE_ENV === 'development' ? (
+                            <label
+                                title="Dry Run Mode"
+                                style={{ display: 'flex', alignItems: 'center', margin: '0 8px', cursor: 'pointer' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={dryRun}
+                                    onChange={(e) => handleDryRunChange(e.target.checked)}
+                                    style={{ cursor: 'pointer' }}
+                                />
+                            </label>
+                        ) : null}
+                    </>
                 ) : null}
             </div>
 

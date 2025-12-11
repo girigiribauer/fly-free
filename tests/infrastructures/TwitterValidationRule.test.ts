@@ -11,9 +11,7 @@ describe('checkValidation', () => {
     blueskyUsername: 'xxx',
     blueskyPassword: 'xxx',
     globalAutoclosing: false,
-
     globalForceblank: false,
-    dryRun: false,
   }
 
   test('Invalid if no draft', () => {

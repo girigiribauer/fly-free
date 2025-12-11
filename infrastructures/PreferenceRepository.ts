@@ -49,7 +49,6 @@ export const savePreference = async (pref: Preference): Promise<void> => {
         [storageKeyGlobal]: {
             globalAutoclosing: pref.globalAutoclosing,
             globalForceblank: pref.globalForceblank,
-            dryRun: pref.dryRun,
         },
     }
 

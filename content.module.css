@@ -258,3 +258,9 @@
 :global([data-testid="DMDrawer"]) {
   display: none !important;
 }
+
+:global([data-testid="tweetButton"]),
+:global([data-testid="chat-drawer-main"]) {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}

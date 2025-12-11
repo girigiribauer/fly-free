@@ -6,6 +6,10 @@ import { MAX_IMAGE_SIZE } from '~/libs/Constants'
 const MAX_DIMENSION = 2000
 const MAX_FILE_SIZE = MAX_IMAGE_SIZE // 900KB
 
+interface ResizableImage {
+    resize(opts: { w: number; h: number }): void
+}
+
 export const optimizePostImage = async (
     image: PostImage,
 ): Promise<PostImage> => {
@@ -19,10 +23,11 @@ export const optimizePostImage = async (
     const maxDimension = Math.max(jimpImage.bitmap.width, jimpImage.bitmap.height)
     if (maxDimension > MAX_DIMENSION) {
         const scale = MAX_DIMENSION / maxDimension
-        jimpImage.resize(
-            Math.floor(jimpImage.bitmap.width * scale),
-            Math.floor(jimpImage.bitmap.height * scale)
-        )
+            // Cast to custom interface to support object-based resize plugin
+            ; (jimpImage as unknown as ResizableImage).resize({
+                w: Math.floor(jimpImage.bitmap.width * scale),
+                h: Math.floor(jimpImage.bitmap.height * scale),
+            })
         // console.log('[ImageOptimizer] Step 1 - Resized to 2000px: ...')
     }
 

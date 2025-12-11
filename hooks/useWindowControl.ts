@@ -1,22 +1,10 @@
-import { useCallback, useEffect } from 'react'
-import { debounce } from '~/libs/debounce'
+import { useCallback } from 'react'
+import { sendDebugLog } from '~/libs/remoteLogger'
 
 export const useWindowControl = () => {
-    useEffect(() => {
-        const handleResize = () => {
-            location.reload()
-        }
-        const handleDebouncedResize = debounce(handleResize)
-
-        window.addEventListener('resize', handleDebouncedResize)
-
-        return () => {
-            window.removeEventListener('resize', handleDebouncedResize)
-        }
-    }, [])
-
     const handleClose = useCallback(() => {
-        // beforeunload イベントのキャンセル
+        sendDebugLog('handleClose called')
+        // beforeunload イベントのキャンセル (Phase 2 handler will pick this up)
         window.postMessage({ type: 'FLY_FREE_CLEANUP' }, '*')
 
         // 実際に閉じる

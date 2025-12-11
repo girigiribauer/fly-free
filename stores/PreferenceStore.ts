@@ -16,7 +16,7 @@ export const PreferenceDefaults: Preference = Object.freeze<Preference>({
     blueskyPassword: '',
     globalAutoclosing: false,
     globalForceblank: false,
-    dryRun: false,
+
 })
 
 let pref: Preference = Object.assign({}, PreferenceDefaults)

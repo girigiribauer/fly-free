@@ -12,6 +12,7 @@ export type DeliveryViewProps = {
   delivery: DeliveryAgentState
   draft: Draft | null
   isAutoclosing: Boolean
+  dryRun: Boolean
   handleClose: () => void
 }
 
@@ -19,6 +20,7 @@ export const DeliveryView = ({
   delivery,
   draft,
   isAutoclosing,
+  dryRun,
   handleClose,
 }: DeliveryViewProps) => {
   const [showToast, setShowToast] = useState(false)
@@ -41,7 +43,12 @@ export const DeliveryView = ({
   const { type } = delivery
 
   useEffect(() => {
-    if (!isAutoclosing) return
+    if (!isAutoclosing) {
+      if (count !== null) {
+        setCount(null)
+      }
+      return
+    }
     if (type !== 'Delivered') return
 
     const allSuccess = delivery.recipients.every((r) => r.type === 'Success')
@@ -167,6 +174,7 @@ export const DeliveryView = ({
         }}>
           <p>Type: {type}</p>
           <p>AutoClosing: {String(isAutoclosing)}</p>
+          <p>DryRun: {String(dryRun)}</p>
           <p>AllSuccess: {String(delivery.recipients.every((r) => r.type === 'Success'))}</p>
           <p>Count: {count}</p>
         </div>

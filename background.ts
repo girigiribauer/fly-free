@@ -20,9 +20,13 @@ chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
   })
 })
 
+const PROCESSING_TIME_WINDOW = 2000 // 2 seconds
+let lastProcessedTime = 0
+
 chrome.runtime.onMessage.addListener(async (request, sender) => {
   const receivedMessage = request as ProcessMessage
   if (!receivedMessage) return
+  console.log('[DEBUG-BG] Received message:', receivedMessage)
 
   if (receivedMessage.type === 'CloseWindow') {
     if (sender.tab?.id) {
@@ -31,7 +35,40 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
     return
   }
 
+  if (receivedMessage.type === 'Log') {
+    console.log('[DEBUG-UI]', receivedMessage.payload)
+    return
+  }
+
   if (receivedMessage.type !== 'Post') return
+
+  // GUARD: Prevent double processing with Mutual Exclusion (Web Locks + Storage)
+  // 1. Use navigator.locks to prevent race condition between duplicate listeners reading storage simultaneously
+  // 2. Use chrome.storage.session to share state across HMR zombie contexts
+
+  // Wait, I need to restructure to return boolean from lock
+  const shouldProceed = await navigator.locks.request('flyfree_post_lock', async () => {
+    const now = Date.now()
+    const storageKey = 'lastProcessedTime'
+    const sessionData = await chrome.storage.session.get(storageKey)
+    const lastTime = sessionData[storageKey] || 0
+
+    if (now - lastTime < PROCESSING_TIME_WINDOW) {
+      console.log('[DEBUG-BG] Lock check: THROTTLED (return false)')
+      return false
+    }
+
+    await chrome.storage.session.set({ [storageKey]: now })
+    return true
+  })
+
+  if (!shouldProceed) {
+    console.warn('Duplicate post request ignored (Throttled via Lock+Storage)')
+    console.log('[DEBUG-BG] shouldProceed is false. STOP.')
+    return
+  }
+
+  console.log('[DEBUG-BG] Proceeding with delivery...')
 
   const { draft, recipients } = receivedMessage
   const tabID = sender.tab.id
@@ -41,6 +78,4 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
 
   const service = new DeliveryService()
   await service.deliver(postData, recipients, pref, tabID)
-
-  chrome.runtime.onMessage.removeListener(() => { })
 })

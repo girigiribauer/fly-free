@@ -74,14 +74,11 @@
     "reload": {
         "message": "Reload"
     },
-    "dryRunMode": {
-        "message": "Dry Run Mode"
-    },
     "enabled": {
         "message": "Enabled"
     },
     "description": {
-        "message": "This tool allows you to crosspost to Bluesky using the X (Twitter) posting UI.\nYou can also post to Bluesky individually.\n\nPlease note that this extension will not work if X (Twitter) is unavailable."
+        "message": "FlyFree is a browser extension that uses the X (Twitter) posting interface to crosspost your content to Bluesky.\nYou can also post to Bluesky individually.\n\nPlease note that this extension will not work if X (Twitter) is unavailable."
     },
     "maintenanceNote": {
         "message": "The developer no longer uses X (Twitter), so no new features are planned.\nMajor updates, such as migrating from App Passwords to OAuth, are also unlikely to be implemented.\n\nThank you for your understanding."
