@@ -17,16 +17,20 @@ export const convertDraft2Post = async (draft: Draft): Promise<Post> => {
 
     let linkcard = null
     if (linkcardURL) {
-        const result = await parse(linkcardURL)
-        if (result && result.ogImage) {
-            const thumbnail = await convertImageURL2PostImage(result.ogImage)
+        try {
+            const result = await parse(linkcardURL)
+            if (result && result.ogImage) {
+                const thumbnail = await convertImageURL2PostImage(result.ogImage)
 
-            linkcard = {
-                url: result.url,
-                thumbnail,
-                title: result.title,
-                description: result.description,
+                linkcard = {
+                    url: result.url,
+                    thumbnail,
+                    title: result.title,
+                    description: result.description,
+                }
             }
+        } catch (error) {
+            console.warn(`Failed to process OGP for ${linkcardURL}, falling back to text-only link.`, error)
         }
     }
 

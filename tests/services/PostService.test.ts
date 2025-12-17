@@ -30,7 +30,7 @@ vi.mock('~/infrastructures/ImageProcessor', () => ({
 }))
 
 describe('convertDraft2Post', () => {
-  test('Convert directly in case regular text', async () => {
+  test('通常のテキストのみの場合、そのままPostオブジェクトに変換される', async () => {
     const expected: Post = {
       text: 'test123',
       images: [],
@@ -47,7 +47,7 @@ describe('convertDraft2Post', () => {
     expect(actual).toStrictEqual(expected)
   })
 
-  test('Return with link card URL in case "https://ogp.me/" text', async () => {
+  test('OGP設定のあるURLの場合、リンクカード情報（画像含む）が付与される', async () => {
     const expected: Post = {
       text: 'https://ogp.me/',
       images: [],
@@ -83,5 +83,26 @@ describe('convertDraft2Post', () => {
     )
   })
 
-  test.todo('case embed video')
+  test('OGP画像の取得に失敗した場合、リンクカードはnull（テキストのみ）として変換される', async () => {
+    const { convertImageURL2PostImage } = await import('~/infrastructures/ImageProcessor')
+    vi.mocked(convertImageURL2PostImage).mockRejectedValueOnce(new Error('Image Fetch Failed'))
+
+    const expected: Post = {
+      text: 'https://ogp.me/',
+      images: [],
+      linkcard: null, // Fallback to null
+    }
+
+    const draft: Draft = {
+      text: 'https://ogp.me/',
+      imageURLs: [],
+      linkcardURL: 'https://ogp.me/',
+    }
+
+    // Act
+    const actual = await convertDraft2Post(draft)
+
+    // Assert
+    expect(actual).toStrictEqual(expected)
+  })
 })
