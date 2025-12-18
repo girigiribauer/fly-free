@@ -10,6 +10,7 @@ import { usePreference } from '~/hooks/usePreference'
 import { useDeliveryAgent } from '~/hooks/useDeliveryAgent'
 import { useRecipientSwitch } from '~/hooks/useRecipientSwitch'
 import { getContentStyle } from '~/libs/contentStyles'
+import { useDebugLogRelay } from '~/hooks/useDebugLogRelay'
 
 export const getStyle = getContentStyle
 
@@ -39,6 +40,9 @@ const Overlay = () => {
       setInitialText(draft.text)
     }
   }, [draft, initialText])
+
+  // Start listening for Main World logs
+  useDebugLogRelay()
 
   // Ephemeral Dry Run state (Dev only)
   const [dryRun, setDryRun] = useState(false)

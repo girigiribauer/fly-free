@@ -58,10 +58,8 @@ const handleResize = () => {
     }, 500)
 }
 
-// Listen for resize
 window.addEventListener('resize', handleResize)
 
-// Listen for manual Close request
 window.addEventListener('message', (event) => {
     if (event.source !== window) return
     if (event.data?.type === 'FLY_FREE_CLEANUP') {
