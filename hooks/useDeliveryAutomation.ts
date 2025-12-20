@@ -148,7 +148,7 @@ const useDeliveryTimeout = (
 
         const timeoutId = setTimeout(() => {
             updateTimeouts()
-        }, 15000)
+        }, 300000) // Extended to 5 minutes to accommodate slower uploads/retries
 
         return () => clearTimeout(timeoutId)
     }, [deliveryType, updateTimeouts])
