@@ -119,6 +119,8 @@ const useDeliveryRestoration = (
                             }
                             : r,
                     ),
+                    // For backward compatibility (migration), provide empty draft if missing
+                    draft: restored.draft || { text: '', imageURLs: [], linkcardURL: null },
                 })
             } else if (draft) {
                 const initialRecipients = calculateRecipients(

@@ -1,3 +1,4 @@
+import type { Draft } from '~/models/Draft'
 import type { PostMessageState } from '~/models/PostMessageState'
 
 export type DeliveryAgentState =
@@ -18,9 +19,11 @@ export type DeliveryAgentStateWriting = {
 export type DeliveryAgentStateOnDelivery = {
   type: 'OnDelivery'
   recipients: PostMessageState[]
+  draft: Draft
 }
 
 export type DeliveryAgentStateDelivered = {
   type: 'Delivered'
   recipients: PostMessageState[]
+  draft: Draft
 }

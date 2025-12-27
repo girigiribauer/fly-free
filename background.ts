@@ -36,7 +36,7 @@ chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
 // Monitor for redirection to home (Success case)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (!monitoringTabs.has(tabId)) return
-  if (changeInfo.status !== 'loading' || !changeInfo.url) return
+  if (!changeInfo.url) return
 
   const url = changeInfo.url
   if (

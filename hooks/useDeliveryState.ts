@@ -55,6 +55,7 @@ export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
                 | DeliveryAgentStateDelivered = {
                 type: 'OnDelivery',
                 recipients: updatedRecipients,
+                draft: delivery.draft
             }
 
             if (shouldTransitionToDelivered(updatedRecipients)) {
@@ -92,6 +93,7 @@ export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
                 | DeliveryAgentStateDelivered = {
                 type: 'OnDelivery',
                 recipients: updatedRecipients,
+                draft: prev.draft
             }
 
             if (shouldTransitionToDelivered(updatedRecipients)) {

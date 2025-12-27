@@ -32,7 +32,7 @@ export const usePostTransactionCompat = () => {
             .filter((r) => r.type === 'Posting' || r.type === 'Success' || r.type === 'Error')
             .map((r) => r as unknown as PostMessageState)
 
-        await backupDelivery({ type: 'OnDelivery', recipients: postingRecipients })
+        await backupDelivery({ type: 'OnDelivery', recipients: postingRecipients, draft: { text: '', imageURLs: [], linkcardURL: null } })
 
         const button = document.querySelector(SelectorTweetButton) as HTMLDivElement
         button?.click()

@@ -54,20 +54,20 @@ export const useDeliveryAgent = (
                 recipient: r.recipient,
             }))
 
-        setDelivery({ type: 'OnDelivery', recipients: postingRecipients })
+        // REAL POST
+        const currentDraft: Draft = {
+            text: cleanDraftText(draft.text),
+            imageURLs: draft.imageURLs,
+            linkcardURL: draft.linkcardURL,
+        }
+
+        setDelivery({ type: 'OnDelivery', recipients: postingRecipients, draft: currentDraft })
         sendDebugLog('handleSubmit called. Sending Post message...')
 
         // DRY RUN
         if (dryRun) {
             runDryRun(postingRecipients)
             return
-        }
-
-        // REAL POST
-        const currentDraft: Draft = {
-            text: cleanDraftText(draft.text),
-            imageURLs: draft.imageURLs,
-            linkcardURL: draft.linkcardURL,
         }
 
         const message: ProcessMessage = {

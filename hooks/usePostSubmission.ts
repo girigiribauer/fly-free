@@ -25,7 +25,7 @@ export const usePostSubmission = (
                 recipient: r.recipient,
             }))
 
-        setDelivery({ type: 'OnDelivery', recipients: validRecipients })
+        setDelivery({ type: 'OnDelivery', recipients: validRecipients, draft })
 
         const message: ProcessMessage = {
             type: 'Post',

@@ -69,7 +69,7 @@ const Overlay = () => {
       />
       <DeliveryView
         delivery={delivery}
-        draft={draft}
+        draft={'draft' in delivery ? delivery.draft : draft}
         isAutoclosing={pref.globalAutoclosing}
         handleClose={handleClose}
         dryRun={dryRun}
