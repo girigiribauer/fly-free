@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import {
     calculateRecipients,
@@ -16,6 +16,7 @@ import type { PostMessageState } from '~/models/PostMessageState'
 import type { Preference } from '~/models/Preference'
 import type { ProcessMessage } from '~/models/ProcessMessage'
 import type { SocialMedia } from '~/models/SocialMedia'
+import { clearDelivery } from '~/stores/PreferenceStore'
 
 export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
     const [delivery, setDelivery] = useState<DeliveryAgentState>({
@@ -38,6 +39,16 @@ export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
         () => filterValidRecipients(recipients),
         [recipients],
     )
+
+    // Clear storage when delivery is completed (Delivered state)
+    // This ensures error states don't persist to the next window
+    useEffect(() => {
+        if (delivery.type === 'Delivered') {
+            clearDelivery().catch((error) => {
+                console.error('Failed to clear delivery storage:', error)
+            })
+        }
+    }, [delivery.type])
 
     const updateFromMessage = useCallback(
         (message: ProcessMessage) => {

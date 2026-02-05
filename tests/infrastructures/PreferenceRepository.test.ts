@@ -4,6 +4,7 @@ import {
     savePreference,
     backupDeliveryState,
     restoreDeliveryState,
+    clearDeliveryState,
     setAdapter
 } from '~/infrastructures/PreferenceRepository'
 import { StorageIdentifier } from '~/definitions'
@@ -46,7 +47,7 @@ describe('PreferenceRepository', () => {
         setAdapter(mockAdapter)
     })
 
-    test('savePreference should map flat preference to storage keys', async () => {
+    test('設定の保存: フラットな設定オブジェクトを各ストレージキーに分割して保存できる', async () => {
         const pref: Preference = {
             twitterPaused: true,
             blueskyPaused: true,
@@ -71,7 +72,7 @@ describe('PreferenceRepository', () => {
         })
     })
 
-    test('loadPreference should combine storage keys into flat preference', async () => {
+    test('設定の読み込み: 各ストレージキーから設定を読み込んでフラットなオブジェクトに統合できる', async () => {
         // Setup initial state
         await mockAdapter.set({
             [KeyTwitter]: { twitterPaused: true },
@@ -84,7 +85,7 @@ describe('PreferenceRepository', () => {
         expect(pref.blueskyPaused).toBe(true)
     })
 
-    test('backupDeliveryState and restoreDeliveryState should persist and clear', async () => {
+    test('配信状態のバックアップと復元: 状態を保存し、復元後に自動的にクリアされる', async () => {
         const deliveryState: DeliveryAgentStateOnDelivery = {
             type: 'Posting', // Using a valid type string from DeliveryAgentStateOnDelivery
             recipients: [],
@@ -101,6 +102,27 @@ describe('PreferenceRepository', () => {
         expect(restored).toEqual(deliveryState)
 
         // Should be cleared after restore
+        const storeAfter = mockAdapter._getStore()
+        expect(storeAfter[KeyTemporary]).toBeNull()
+    })
+
+    test('配信状態のクリア: 一時ストレージを明示的にクリアできる', async () => {
+        const deliveryState: DeliveryAgentStateOnDelivery = {
+            type: 'Posting',
+            recipients: [],
+            // @ts-ignore - Partial mock is enough for testing storage
+            draft: {}
+        } as any
+
+        // First, backup some data
+        await backupDeliveryState(deliveryState)
+        const storeBefore = mockAdapter._getStore()
+        expect(storeBefore[KeyTemporary]).toEqual(deliveryState)
+
+        // Then clear it
+        await clearDeliveryState()
+
+        // Should be cleared
         const storeAfter = mockAdapter._getStore()
         expect(storeAfter[KeyTemporary]).toBeNull()
     })

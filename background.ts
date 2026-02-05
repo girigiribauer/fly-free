@@ -2,7 +2,7 @@
 import type { Draft } from '~/models/Draft'
 import { convertDraft2Post } from '~/services/PostService'
 import type { ProcessMessage } from '~/models/ProcessMessage'
-import { load } from '~/stores/PreferenceStore'
+import { load, clearDelivery } from '~/stores/PreferenceStore'
 import { DeliveryService } from '~/services/DeliveryService'
 
 import { StorageIdentifier } from '~/definitions'
@@ -68,7 +68,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
           if (allFinished) {
             console.log('[DEBUG-BG] Delivery complete. Clearing temporary storage immediately.')
-            chrome.storage.local.remove(storageKey)
+            clearDelivery()
           } else {
             console.log('[DEBUG-BG] Updating storage to mark Twitter as Success')
             delivery.recipients = newRecipients

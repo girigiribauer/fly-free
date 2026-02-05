@@ -74,7 +74,11 @@ export const restoreDeliveryState =
             storageKeyTemporary
         ] as DeliveryAgentStateOnDelivery
 
-        await getAdapter().set({ [storageKeyTemporary]: null })
+        await clearDeliveryState()
 
         return delivery
     }
+
+export const clearDeliveryState = async (): Promise<void> => {
+    await getAdapter().set({ [storageKeyTemporary]: null })
+}

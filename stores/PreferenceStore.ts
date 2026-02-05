@@ -2,6 +2,7 @@ import {
     backupDeliveryState,
     loadPreference,
     restoreDeliveryState,
+    clearDeliveryState,
     savePreference,
     setAdapter as setRepositoryAdapter,
 } from '~/infrastructures/PreferenceRepository'
@@ -49,6 +50,10 @@ export const restoreDelivery =
     async (): Promise<DeliveryAgentStateOnDelivery | null> => {
         return await restoreDeliveryState()
     }
+
+export const clearDelivery = async (): Promise<void> => {
+    await clearDeliveryState()
+}
 
 const listen = () => {
     for (let listener of listeners) {
