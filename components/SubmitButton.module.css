@@ -5,7 +5,7 @@
   background: var(--color-primary);
   border: 0;
   border-radius: 16px;
-  color: var(--color-white);
+  color: #fff !important;
   font-size: 15px;
   font-weight: bold;
   appearance: none;

@@ -177,6 +177,7 @@
 :global([aria-label="GIF"]),
 :global([data-testid="createPollButton"]),
 :global([data-testid="scheduleOption"]),
+:global([data-testid="contentDisclosureButton"]),
 :global([data-testid="geoButton"]),
 :global([data-testid="addButton"]),
 :global([aria-label="Add Tweet"]) {
