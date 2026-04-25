@@ -15,7 +15,6 @@ export class DeliveryService {
         pref: Preference,
         tabID: number,
     ): Promise<void> {
-        console.log('[DEBUG-BG] DeliveryService.deliver called', { recipientsString: JSON.stringify(recipients) })
         // X(Twitter) は必ず最後に投稿する
         const sortedRecipients = [...recipients].sort((a, b) => {
             if (a.recipient === 'Twitter') return 1
@@ -44,9 +43,7 @@ export class DeliveryService {
                 let result: string | Error
                 try {
                     result = await poster.post(post, pref)
-                    console.log(`[DEBUG-BG] Post result for ${recipient}:`, result)
                 } catch (error) {
-                    console.error(`[DEBUG-BG] Error posting to ${recipient}:`, error)
                     result = error as Error
                 }
 

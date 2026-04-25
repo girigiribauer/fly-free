@@ -55,7 +55,7 @@ describe('useDeliveryAgent', () => {
     })
 
     it('handleSubmitが短時間に連打されても、二重投稿を防ぐべき', async () => {
-        const { result } = renderHook(() =>
+        const { result, unmount } = renderHook(() =>
             useDeliveryAgent(mockDraft, mockPref, false),
         )
 
@@ -78,10 +78,12 @@ describe('useDeliveryAgent', () => {
         await waitFor(() => {
             expect(result.current.delivery.type).toBe('OnDelivery')
         })
+
+        unmount()
     })
 
     it('既にOnDelivery状態の場合、再送信すべきではない', async () => {
-        const { result } = renderHook(() =>
+        const { result, unmount } = renderHook(() =>
             useDeliveryAgent(mockDraft, mockPref, false),
         )
 
@@ -107,6 +109,8 @@ describe('useDeliveryAgent', () => {
         })
 
         expect(mockChromeSendMessage).not.toHaveBeenCalled()
+
+        unmount()
     })
 
     it('Dry Runモードの場合、実際のメッセージは送信されず、安全に終了すべき', async () => {

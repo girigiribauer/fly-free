@@ -13,7 +13,7 @@ import { backupDelivery, restoreDelivery } from '~/stores/PreferenceStore'
 type Actions = {
     setDelivery: (state: DeliveryAgentState) => void
     updateFromMessage: (message: ProcessMessage) => void
-    updateTimeouts: () => void
+    finalizeDelivery: (reason?: string) => void
 }
 
 /**
@@ -143,27 +143,53 @@ const useDeliveryRestoration = (
  */
 const useDeliveryTimeout = (
     deliveryType: DeliveryAgentState['type'],
-    updateTimeouts: Actions['updateTimeouts'],
+    finalizeDelivery: Actions['finalizeDelivery'],
 ) => {
     useEffect(() => {
         if (deliveryType !== 'OnDelivery') return
 
         const timeoutId = setTimeout(() => {
-            updateTimeouts()
+            finalizeDelivery('Timeout')
         }, 300000) // Extended to 5 minutes to accommodate slower uploads/retries
 
         return () => clearTimeout(timeoutId)
-    }, [deliveryType, updateTimeouts])
+    }, [deliveryType, finalizeDelivery])
+}
+
+/**
+ * Ensures that if the user closes the popup before completion, we finalize the state.
+ * Using 'pagehide' instead of 'unload' per modern browser recommendations.
+ */
+const useWindowCloseFinalizer = (
+    deliveryType: DeliveryAgentState['type'],
+    finalizeDelivery: Actions['finalizeDelivery']
+) => {
+    const finalizeRef = useRef(finalizeDelivery)
+    const typeRef = useRef(deliveryType)
+
+    useEffect(() => {
+        finalizeRef.current = finalizeDelivery
+        typeRef.current = deliveryType
+    }, [finalizeDelivery, deliveryType])
+
+    useEffect(() => {
+        const handlePageHide = () => {
+            if (typeRef.current === 'OnDelivery') {
+                finalizeRef.current('Interrupted by User')
+            }
+        }
+        window.addEventListener('pagehide', handlePageHide)
+        return () => window.removeEventListener('pagehide', handlePageHide)
+    }, [])
 }
 
 export const useDeliveryAutomation = (
     delivery: DeliveryAgentState,
     draft: Draft | null,
     pref: Preference,
-    // dryRun argument removed as it was unused (relied on process.env)
     actions: Actions,
 ) => {
-    const { setDelivery, updateFromMessage, updateTimeouts } = actions
+    const { setDelivery, updateFromMessage, finalizeDelivery } = actions
 
     // 1. Setup Action Handler
     const { handleReceiveMessageRef } = useMessageActionHandler(
@@ -178,7 +204,10 @@ export const useDeliveryAutomation = (
     useDeliveryRestoration(delivery.type, draft, pref, setDelivery)
 
     // 4. Handle Timeouts
-    useDeliveryTimeout(delivery.type, updateTimeouts)
+    useDeliveryTimeout(delivery.type, finalizeDelivery)
+
+    // 5. Handle Window Close
+    useWindowCloseFinalizer(delivery.type, finalizeDelivery)
 
     // 5. Dry Run Simulation (Exposed Action)
     const runDryRun = useCallback(

@@ -21,14 +21,14 @@ export const useDeliveryAgent = (
         recipients,
         validRecipients,
         updateFromMessage,
-        updateTimeouts,
+        finalizeDelivery,
     } = useDeliveryState(draft, pref)
 
     // 2. Automation & Side Effects (Dirty)
     const { runDryRun } = useDeliveryAutomation(delivery, draft, pref, {
         setDelivery,
         updateFromMessage,
-        updateTimeouts,
+        finalizeDelivery,
     })
 
     const isSubmittingRef = useRef(false)

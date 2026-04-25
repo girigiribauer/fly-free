@@ -99,13 +99,13 @@ describe('optimizePostImage', () => {
         expect(dimensionRatio).toBeGreaterThan(0.1)
     })
 
-    test('Large dimension image (>2000px) should trigger object-style resize', async () => {
+    test('Large dimension image (>4000px) should trigger object-style resize', async () => {
         // Mock large image
         const mockResize = vi.fn()
         const mockGetBuffer = vi.fn().mockResolvedValue(Buffer.from(new Uint8Array(100))) // Small result
 
         const mockJimpImage = {
-            bitmap: { width: 3000, height: 3000 },
+            bitmap: { width: 5000, height: 5000 },
             resize: mockResize,
             getBuffer: mockGetBuffer,
         }
@@ -116,8 +116,8 @@ describe('optimizePostImage', () => {
         const image: PostImage = {
             binary: new Uint8Array(10), // Dummy content
             mimetype: 'image/png',
-            width: 3000,
-            height: 3000,
+            width: 5000,
+            height: 5000,
             filesize: 5000000,
         }
 
@@ -125,12 +125,12 @@ describe('optimizePostImage', () => {
 
         // Verify resize was called with object
         expect(mockResize).toHaveBeenCalledWith(expect.objectContaining({
-            w: 2000,
-            h: 2000
+            w: 4000,
+            h: 4000
         }))
 
-        // Verify scaling ratio (3000 -> 2000 is 2/3)
-        // 3000 * (2000/3000) = 2000
+        // Verify scaling ratio (5000 -> 4000 is 4/5)
+        // 5000 * (4000/5000) = 4000
 
         readSpy.mockRestore()
     })

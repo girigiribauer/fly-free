@@ -27,7 +27,6 @@ chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
   if (win.tabs && win.tabs.length > 0) {
     const tabId = win.tabs[0].id
     if (tabId) {
-      console.log(`[DEBUG-BG] Tracking tab ${tabId} for auto-close on redirect`)
       monitoringTabs.add(tabId)
     }
   }
@@ -43,8 +42,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     url.includes('twitter.com/home') ||
     url.includes('x.com/home')
   ) {
-    console.log(`[DEBUG-BG] Detected redirect to Home (Success) for tab ${tabId}.`)
-
     // IMPORTANT: Update Storage directly since Content Script is dead on /home
     // This ensures that "Success" is recorded for restoration.
     const storageKey = `${StorageIdentifier}_Temporary`
@@ -67,10 +64,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
           )
 
           if (allFinished) {
-            console.log('[DEBUG-BG] Delivery complete. Clearing temporary storage immediately.')
             clearDelivery()
           } else {
-            console.log('[DEBUG-BG] Updating storage to mark Twitter as Success')
             delivery.recipients = newRecipients
             chrome.storage.local.set({ [storageKey]: delivery })
           }
@@ -105,7 +100,6 @@ let lastProcessedTime = 0
 chrome.runtime.onMessage.addListener(async (request, sender) => {
   const receivedMessage = request as ProcessMessage
   if (!receivedMessage) return
-  console.log('[DEBUG-BG] Received message:', receivedMessage)
 
   if (receivedMessage.type === 'CloseWindow') {
     if (sender.tab?.id) {
@@ -114,10 +108,6 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
     return
   }
 
-  if (receivedMessage.type === 'Log') {
-    console.log('[DEBUG-UI]', receivedMessage.payload)
-    return
-  }
 
   if (receivedMessage.type !== 'Post') return
 
@@ -133,7 +123,6 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
     const lastTime = sessionData[storageKey] || 0
 
     if (now - lastTime < PROCESSING_TIME_WINDOW) {
-      console.log('[DEBUG-BG] Lock check: THROTTLED (return false)')
       return false
     }
 
@@ -143,11 +132,8 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
 
   if (!shouldProceed) {
     console.warn('Duplicate post request ignored (Throttled via Lock+Storage)')
-    console.log('[DEBUG-BG] shouldProceed is false. STOP.')
     return
   }
-
-  console.log('[DEBUG-BG] Proceeding with delivery...')
 
   const { draft, recipients } = receivedMessage
   const tabID = sender.tab.id

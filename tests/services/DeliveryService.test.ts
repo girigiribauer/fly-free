@@ -107,4 +107,57 @@ describe('DeliveryService', () => {
             error: errorMsg
         })
     })
+
+    it('Blueskyが失敗しても、Twitterの処理は続行されるべき', async () => {
+        const recipients: PostMessageState[] = [
+            { type: 'Posting', recipient: 'Twitter' },
+            { type: 'Posting', recipient: 'Bluesky' }
+        ]
+
+        mockPost.mockRejectedValue(new Error('Bluesky API Error'))
+        mockTwitterPost.mockResolvedValue('Twitter UI Triggered')
+
+        await service.deliver(dummyPost, recipients, dummyPref, mockTabID)
+
+        // Blueskyが失敗してもTwitterは呼ばれること
+        expect(mockTwitterPost).toHaveBeenCalled()
+
+        // Blueskyのエラーがタブに送信されていること
+        expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(mockTabID, {
+            type: 'Error',
+            recipient: 'Bluesky',
+            error: 'Bluesky API Error'
+        })
+    })
+
+    it('Blueskyの処理完了後にTwitterが処理されること（直列実行の順序保証）', async () => {
+        const callOrder: string[] = []
+
+        mockPost.mockImplementation(async () => {
+            callOrder.push('bluesky-start')
+            // Blueskyの処理が時間を要することを模倣
+            await new Promise(resolve => setTimeout(resolve, 10))
+            callOrder.push('bluesky-end')
+            return 'https://bsky.app/post/123'
+        })
+
+        mockTwitterPost.mockImplementation(async () => {
+            callOrder.push('twitter-start')
+            return 'Twitter UI Triggered'
+        })
+
+        const recipients: PostMessageState[] = [
+            { type: 'Posting', recipient: 'Twitter' },
+            { type: 'Posting', recipient: 'Bluesky' }
+        ]
+
+        await service.deliver(dummyPost, recipients, dummyPref, mockTabID)
+
+        // Blueskyが完全に終了してからTwitterが開始されるべき
+        expect(callOrder).toEqual([
+            'bluesky-start',
+            'bluesky-end',
+            'twitter-start',
+        ])
+    })
 })

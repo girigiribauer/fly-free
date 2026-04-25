@@ -80,8 +80,8 @@ export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
         [delivery],
     )
 
-    // For Timeout logic (updating Posting -> Error)
-    const updateTimeouts = useCallback(() => {
+    // For Timeout and Window Close logic (updating Posting -> Error)
+    const finalizeDelivery = useCallback((reason: string = 'Timeout') => {
         setDelivery((prev) => {
             if (prev.type !== 'OnDelivery') return prev
 
@@ -93,7 +93,7 @@ export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
                     return {
                         ...r,
                         type: 'Error',
-                        error: 'Timeout',
+                        error: reason,
                     } as PostMessageState
                 }
                 return r
@@ -124,6 +124,6 @@ export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
         recipients,
         validRecipients,
         updateFromMessage,
-        updateTimeouts
+        finalizeDelivery
     }
 }

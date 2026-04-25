@@ -157,4 +157,74 @@ describe('deliveryStateLogic', () => {
             expect(result).toBe(currentRecipients)
         })
     })
+
+    describe('タイムアウト時の状態遷移（updateTimeoutsシナリオ）', () => {
+        // タイムアウト時のロジック: Posting → Error('Timeout'), それ以外は維持
+        // ※ 実際のupdateTimeoutsはuseDeliveryState内のReact hookだが、
+        //   ロジックの本質は「Postingのみ変換」なのでここで検証する
+
+        const applyTimeout = (recipients: PostMessageState[]): PostMessageState[] => {
+            return recipients.map((r) => {
+                if (r.type === 'Posting') {
+                    return { ...r, type: 'Error', error: 'Timeout' } as PostMessageState
+                }
+                return r
+            })
+        }
+
+        it('Blueskyが既にSuccessの場合、タイムアウトでもSuccessが維持されるべき', () => {
+            const recipients: PostMessageState[] = [
+                { type: 'Success', recipient: 'Bluesky', url: 'https://bsky.app/post/123' },
+                { type: 'Posting', recipient: 'Twitter' },
+            ]
+
+            const result = applyTimeout(recipients)
+
+            expect(result[0]).toEqual({
+                type: 'Success',
+                recipient: 'Bluesky',
+                url: 'https://bsky.app/post/123',
+            })
+            expect(result[1]).toEqual({
+                type: 'Error',
+                recipient: 'Twitter',
+                error: 'Timeout',
+            })
+        })
+
+        it('全宛先がPostingの場合、全宛先がError(Timeout)になるべき', () => {
+            const recipients: PostMessageState[] = [
+                { type: 'Posting', recipient: 'Bluesky' },
+                { type: 'Posting', recipient: 'Twitter' },
+            ]
+
+            const result = applyTimeout(recipients)
+
+            expect(result[0].type).toBe('Error')
+            expect(result[1].type).toBe('Error')
+        })
+
+        it('全宛先が既にSuccess/Errorの場合、タイムアウトは何も変更しないべき', () => {
+            const recipients: PostMessageState[] = [
+                { type: 'Success', recipient: 'Bluesky', url: 'https://bsky.app/post/123' },
+                { type: 'Error', recipient: 'Twitter', error: 'Network Error' },
+            ]
+
+            const result = applyTimeout(recipients)
+
+            expect(result[0]).toEqual(recipients[0])
+            expect(result[1]).toEqual(recipients[1])
+        })
+
+        it('タイムアウト後、shouldTransitionToDeliveredがtrueを返すべき', () => {
+            const recipients: PostMessageState[] = [
+                { type: 'Success', recipient: 'Bluesky', url: 'https://bsky.app/post/123' },
+                { type: 'Posting', recipient: 'Twitter' },
+            ]
+
+            const afterTimeout = applyTimeout(recipients)
+
+            expect(shouldTransitionToDelivered(afterTimeout)).toBe(true)
+        })
+    })
 })

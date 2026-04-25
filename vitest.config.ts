@@ -4,6 +4,7 @@ import path from 'path'
 
 export default defineConfig({
   test: {
+    threads: false,
     alias: {
       '~': path.resolve(__dirname, './'),
       // Allow deep import for jimp plugin in tests

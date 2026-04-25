@@ -34,8 +34,6 @@ export const postToBluesky = async (
     const { text, images, linkcard } = post
     const { blueskyUsername: username, blueskyPassword: password } = pref
 
-    console.log('[DEBUG-BG] postToBluesky called', { textSummary: text.slice(0, 20) })
-
     const agent = new BskyAgent({
         service: 'https://bsky.social',
         // @ts-ignore - The type definition might be strict, but standard AtpAgent accepts fetch
@@ -119,8 +117,6 @@ export const postToBluesky = async (
         }
     }
 
-    console.log('[DEBUG-BG] Ready to call agent.post (Idempotent Strategy)')
-
     const rkey = TIDGenerator.next()
     const repo = loginResponse.data.did
 
@@ -142,26 +138,14 @@ export const postToBluesky = async (
     try {
         result = await postRecord()
     } catch (error: any) {
-        console.warn('[DEBUG-BG] Attempt 1 failed:', error)
-
-        const isAlreadyExists = error.message?.includes('AlreadyExists') || error.error === 'InvalidRequest' && error.message?.includes('exist')
-
-        if (isAlreadyExists) {
-            console.log('[DEBUG-BG] Record already exists (Attempt 1 was Zombie Success). Treating as success.')
+        if (error.status === 400 && error.message.includes('Record already exists')) {
             return convertBskyAppURL(`at://${repo}/app.bsky.feed.post/${rkey}`, username)
         }
 
-        // Retry Attempt 2
-        console.log('[DEBUG-BG] Starting Attempt 2 (Retry) with same rkey...')
         try {
             result = await postRecord()
         } catch (retryError: any) {
-            console.warn('[DEBUG-BG] Attempt 2 failed:', retryError)
-
-            // Check again for AlreadyExists (in case Attempt 1 finished LATE during Attempt 2)
-            const isAlreadyExistsRetry = retryError.message?.includes('AlreadyExists') || retryError.error === 'InvalidRequest' && retryError.message?.includes('exist')
-            if (isAlreadyExistsRetry) {
-                console.log('[DEBUG-BG] Record already exists (Found during Attempt 2). Treating as success.')
+            if (retryError.status === 400 && retryError.message.includes('Record already exists')) {
                 return convertBskyAppURL(`at://${repo}/app.bsky.feed.post/${rkey}`, username)
             }
 
@@ -169,6 +153,5 @@ export const postToBluesky = async (
         }
     }
 
-    console.log('[DEBUG-BG] agent.post finished', { uri: result.uri })
     return convertBskyAppURL(result.uri, username)
 }

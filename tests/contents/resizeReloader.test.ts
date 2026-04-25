@@ -50,6 +50,7 @@ describe('resizeReloader', () => {
             configurable: true,
             value: { ...window.location, reload: originalReload },
         })
+        vi.clearAllTimers()
         vi.useRealTimers()
         vi.restoreAllMocks()
     })
