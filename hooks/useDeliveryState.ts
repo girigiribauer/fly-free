@@ -80,7 +80,7 @@ export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
         [delivery],
     )
 
-    // For Timeout and Window Close logic (updating Posting -> Error)
+    // For Timeout and Window Close logic (updating Posting -> Unknown/Clear)
     const finalizeDelivery = useCallback((reason: string = 'Timeout') => {
         setDelivery((prev) => {
             if (prev.type !== 'OnDelivery') return prev
@@ -92,8 +92,7 @@ export const useDeliveryState = (draft: Draft | null, pref: Preference) => {
                 if (r.type === 'Posting') {
                     return {
                         ...r,
-                        type: 'Error',
-                        error: reason,
+                        type: 'Unknown',
                     } as PostMessageState
                 }
                 return r

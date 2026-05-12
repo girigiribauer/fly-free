@@ -13,6 +13,7 @@ export type SocialMediaIconType =
   | 'Paused'
   | 'Invalid'
   | 'Success'
+  | 'Unknown'
 
 export type SocialMediaIconProps = {
   type: SocialMediaIconType
@@ -30,6 +31,7 @@ export const SocialMediaIcon = ({ media, type }: SocialMediaIconProps) => {
     Paused: style.paused,
     Invalid: style.invalid,
     Success: style.success,
+    Unknown: style.unknown,
   }
   const classNames = [style.container, statusClasses[type]]
 
@@ -63,6 +65,15 @@ export const SocialMediaIcon = ({ media, type }: SocialMediaIconProps) => {
       {type === 'Success' ? (
         <img
           src={iconSuccess}
+          className={style.iconNote}
+          alt=""
+          width="14"
+          height="14"
+        />
+      ) : null}
+      {type === 'Unknown' ? (
+        <img
+          src={iconCaution}
           className={style.iconNote}
           alt=""
           width="14"

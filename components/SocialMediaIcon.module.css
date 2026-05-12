@@ -15,7 +15,8 @@
 }
 .initial > .icon,
 .paused > .icon,
-.invalid > .icon {
+.invalid > .icon,
+.unknown > .icon {
   opacity: 0.5;
   filter: grayscale(100%);
 }
@@ -37,4 +38,7 @@
 }
 .success > .iconNote {
   background: var(--color-success);
+}
+.unknown > .iconNote {
+  background: var(--color-mono3);
 }

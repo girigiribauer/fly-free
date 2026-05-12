@@ -8,7 +8,7 @@ import type { DeliveryAgentState } from '~/models/DeliveryAgentState'
 import type { PostMessageState } from '~/models/PostMessageState'
 import type { Preference } from '~/models/Preference'
 import type { ProcessMessage } from '~/models/ProcessMessage'
-import { backupDelivery, restoreDelivery } from '~/stores/PreferenceStore'
+import { backupDelivery, clearDelivery, restoreDelivery } from '~/stores/PreferenceStore'
 
 type Actions = {
     setDelivery: (state: DeliveryAgentState) => void
@@ -33,6 +33,7 @@ const useMessageActionHandler = (
             switch (receivedMessage.type) {
                 case 'Success':
                 case 'Error':
+                case 'Unknown':
                     updateFromMessage(receivedMessage)
                     break
 
@@ -157,25 +158,25 @@ const useDeliveryTimeout = (
 }
 
 /**
- * Ensures that if the user closes the popup before completion, we finalize the state.
+ * Ensures that if the user closes the popup before completion, we clear the state.
+ * This avoids resuming a stale/interrupted delivery state when the popup is reopened.
  * Using 'pagehide' instead of 'unload' per modern browser recommendations.
  */
 const useWindowCloseFinalizer = (
-    deliveryType: DeliveryAgentState['type'],
-    finalizeDelivery: Actions['finalizeDelivery']
+    deliveryType: DeliveryAgentState['type']
 ) => {
-    const finalizeRef = useRef(finalizeDelivery)
     const typeRef = useRef(deliveryType)
 
     useEffect(() => {
-        finalizeRef.current = finalizeDelivery
         typeRef.current = deliveryType
-    }, [finalizeDelivery, deliveryType])
+    }, [deliveryType])
 
     useEffect(() => {
         const handlePageHide = () => {
             if (typeRef.current === 'OnDelivery') {
-                finalizeRef.current('Interrupted by User')
+                // We don't finalize to Unknown here because the UI is closing anyway.
+                // The priority is to clear the storage so the next open starts fresh.
+                void clearDelivery()
             }
         }
         window.addEventListener('pagehide', handlePageHide)
@@ -207,7 +208,7 @@ export const useDeliveryAutomation = (
     useDeliveryTimeout(delivery.type, finalizeDelivery)
 
     // 5. Handle Window Close
-    useWindowCloseFinalizer(delivery.type, finalizeDelivery)
+    useWindowCloseFinalizer(delivery.type)
 
     // 5. Dry Run Simulation (Exposed Action)
     const runDryRun = useCallback(

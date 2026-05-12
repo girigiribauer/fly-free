@@ -32,7 +32,7 @@ describe('useDeliveryState', () => {
     })
 
     describe('finalizeDelivery', () => {
-        it('Posting状態の宛先のみがErrorに変換されるべき', async () => {
+        it('Posting状態の宛先のみがUnknownに変換されるべき', async () => {
             const { result } = renderHook(() =>
                 useDeliveryState(mockDraft, mockPref),
             )
@@ -63,18 +63,17 @@ describe('useDeliveryState', () => {
                 url: 'https://bsky.app/post/123',
             })
 
-            // TwitterのみErrorになるべき
+            // TwitterのみUnknownになるべき
             expect(result.current.recipients[1]).toEqual({
-                type: 'Error',
+                type: 'Unknown',
                 recipient: 'Twitter',
-                error: 'Interrupted by User',
             })
 
             // 全宛先が確定したのでDeliveredに遷移すべき
             expect(result.current.delivery.type).toBe('Delivered')
         })
 
-        it('全宛先がPostingの場合、全てErrorになるべき', async () => {
+        it('全宛先がPostingの場合、全てUnknownになるべき', async () => {
             const { result } = renderHook(() =>
                 useDeliveryState(mockDraft, mockPref),
             )
@@ -94,8 +93,8 @@ describe('useDeliveryState', () => {
                 result.current.finalizeDelivery('Timeout')
             })
 
-            expect(result.current.recipients[0].type).toBe('Error')
-            expect(result.current.recipients[1].type).toBe('Error')
+            expect(result.current.recipients[0].type).toBe('Unknown')
+            expect(result.current.recipients[1].type).toBe('Unknown')
             expect(result.current.delivery.type).toBe('Delivered')
         })
 

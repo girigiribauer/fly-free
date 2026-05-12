@@ -7,6 +7,7 @@ export type PostMessageState =
   | PostMessageStatePosting
   | PostMessageStateSuccess
   | PostMessageStateError
+  | PostMessageStateUnknown
 
 export type PostMessageStateInitial = {
   type: 'Initial'
@@ -35,4 +36,9 @@ export type PostMessageStateError = {
   type: 'Error'
   recipient: SocialMedia
   error: string
+}
+
+export type PostMessageStateUnknown = {
+  type: 'Unknown'
+  recipient: SocialMedia
 }

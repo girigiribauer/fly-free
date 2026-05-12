@@ -23,17 +23,22 @@ export const useScanDraft = (
         event.stopPropagation()
       }
     },
-    [draft],
+    [handleSubmit],
   )
+
+  useEffect(() => {
+    // Use capture phase on document to ensure we intercept before Twitter's React app.
+    // Since this hook is only mounted when Fly Free's overlay is active,
+    // this won't affect normal Twitter usage outside of the Fly Free session.
+    document.addEventListener('keydown', handleInterceptMetaKey, { capture: true })
+    return () => {
+      document.removeEventListener('keydown', handleInterceptMetaKey, { capture: true })
+    }
+  }, [handleInterceptMetaKey])
 
   const observeTwitterDOM = useCallback(() => {
     const handleDOMChanges = () => {
       const { textarea, attachments, linkcard } = queryFromUnstableDOM()
-
-      if (textarea) {
-        textarea.removeEventListener('keydown', handleInterceptMetaKey)
-        textarea.addEventListener('keydown', handleInterceptMetaKey)
-      }
 
       const draft = captureDraft({ textarea, attachments, linkcard })
       setDraft(draft)

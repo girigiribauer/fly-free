@@ -38,6 +38,7 @@ export const DeliveryView = ({
     Posting: 'Valid',
     Success: 'Success',
     Error: 'Invalid',
+    Unknown: 'Unknown',
   }
 
   const { type } = delivery
@@ -118,6 +119,14 @@ export const DeliveryView = ({
                 className={style.recipientResult}
                 title={result.error}>
                 <span className={style.recipientLabel}>Error...</span>
+              </div>
+            ) : null}
+
+            {result.type === 'Unknown' ? (
+              <div
+                className={style.recipientResult}
+                title="Unknown status (e.g. timeout)">
+                <span className={style.recipientLabel}>Unknown</span>
               </div>
             ) : null}
           </li>

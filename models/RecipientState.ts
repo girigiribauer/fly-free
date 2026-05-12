@@ -6,6 +6,7 @@ export type RecipientState =
   | RecipientStatePosting
   | RecipientStateSuccess
   | RecipientStateError
+  | RecipientStateUnknown
 
 export type RecipientStateInitial = {
   type: 'Initial'
@@ -33,4 +34,9 @@ export type RecipientStateError = {
   type: 'Error'
   recipient: SocialMedia
   error: string
+}
+
+export type RecipientStateUnknown = {
+  type: 'Unknown'
+  recipient: SocialMedia
 }

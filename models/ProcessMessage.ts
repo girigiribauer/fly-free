@@ -2,12 +2,14 @@ import type {
   PostMessageState,
   PostMessageStateError,
   PostMessageStateSuccess,
+  PostMessageStateUnknown,
 } from '~/models/PostMessageState'
 
 export type ProcessMessage =
   | ProcessMessagePost
   | ProcessMessageSuccess
   | ProcessMessageError
+  | ProcessMessageUnknown
   | ProcessMessageTweet
   | ProcessMessageCloseWindow
   | ProcessMessageLog
@@ -21,6 +23,8 @@ export type ProcessMessagePost = {
 export type ProcessMessageSuccess = PostMessageStateSuccess
 
 export type ProcessMessageError = PostMessageStateError
+
+export type ProcessMessageUnknown = PostMessageStateUnknown
 
 export type ProcessMessageTweet = {
   type: 'Tweet'
