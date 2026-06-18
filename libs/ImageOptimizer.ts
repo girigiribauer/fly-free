@@ -9,11 +9,12 @@ interface ResizableImage {
 
 export const optimizePostImage = async (
     image: PostImage,
+    targetSize: number = MAX_IMAGE_SIZE,
 ): Promise<PostImage> => {
 
     // Skip optimization if already within limits
     if (
-        image.filesize <= MAX_IMAGE_SIZE &&
+        image.filesize <= targetSize &&
         image.width <= MAX_IMAGE_DIMENSION &&
         image.height <= MAX_IMAGE_DIMENSION
     ) {
@@ -46,7 +47,7 @@ export const optimizePostImage = async (
         // jimpImage.quality(quality)
         const buffer = await jimpImage.getBuffer('image/jpeg', { quality } as any)
 
-        if (buffer.length <= MAX_IMAGE_SIZE) {
+        if (buffer.length <= targetSize) {
             minQuality = quality
             bestResult = { buffer: new Uint8Array(buffer), quality }
         } else {

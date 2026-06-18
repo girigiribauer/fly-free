@@ -7,6 +7,7 @@ import type { PostImage } from '~/models/PostImage'
 
 export const convertImageURL2PostImage = async (
     imageURL: string,
+    targetSize?: number,
 ): Promise<PostImage> => {
     const binary = await fetchImageFromURL(imageURL)
     const fetchResponse = await fetch(imageURL)
@@ -29,7 +30,7 @@ export const convertImageURL2PostImage = async (
         filesize,
     }
 
-    const resized = await optimizePostImage(image)
+    const resized = await optimizePostImage(image, targetSize)
 
     return resized
 }

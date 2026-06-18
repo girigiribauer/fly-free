@@ -2,6 +2,7 @@ import * as Promise from 'bluebird'
 
 import { convertImageURL2PostImage } from '~/infrastructures/ImageProcessor'
 import { fetchOpenGraph as parse } from '~/infrastructures/OpenGraphRepository'
+import { MAX_LINK_THUMB_SIZE } from '~/libs/Constants'
 import type { Draft } from '~/models/Draft'
 import type { Post } from '~/models/Post'
 
@@ -20,7 +21,7 @@ export const convertDraft2Post = async (draft: Draft): Promise<Post> => {
         try {
             const result = await parse(linkcardURL)
             if (result && result.ogImage) {
-                const thumbnail = await convertImageURL2PostImage(result.ogImage)
+                const thumbnail = await convertImageURL2PostImage(result.ogImage, MAX_LINK_THUMB_SIZE)
 
                 linkcard = {
                     url: result.url,
