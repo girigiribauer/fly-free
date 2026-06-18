@@ -146,3 +146,41 @@
   color: var(--color-mono4);
   white-space: pre-wrap;
 }
+
+.migration {
+  margin: 0 0 20px 0;
+  padding: 24px;
+  border: 2px solid #ec4765;
+  border-radius: 12px;
+  background: #fef2f4;
+}
+
+.migrationNote {
+  margin: 0 0 20px 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #333;
+  white-space: pre-wrap;
+}
+
+.migrationButtons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.migrationBadge {
+  display: inline-flex;
+}
+
+.migrationBadge img {
+  height: 48px;
+  width: auto;
+  display: block;
+}
+
+.migrationBadge:hover {
+  opacity: 0.85;
+}

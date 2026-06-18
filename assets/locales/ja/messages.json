@@ -82,5 +82,17 @@
     },
     "maintenanceNote": {
         "message": "開発者は既に X (Twitter) を利用していないため、今後の新規機能追加は予定していません。\nまた、App Password から OAuth への移行など、大規模な改修も行われない可能性があります。\n\nご理解のほどお願いいたします。"
+    },
+    "migrationBanner": {
+        "message": "後継版への移行のお願い"
+    },
+    "migrationNote": {
+        "message": "今後の更新や不具合修正は行いません。後継版の FlyFree Glide へ移行してください。\nX へのクロスポストもこれまで通り使えますし、新しい機能もお使いいただけます！"
+    },
+    "glideChrome": {
+        "message": "Chrome 版を入手"
+    },
+    "glideFirefox": {
+        "message": "Firefox 版を入手"
     }
 }

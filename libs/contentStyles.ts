@@ -1,4 +1,5 @@
 import styleTextDeliveryView from 'data-text:~/components/DeliveryView.module.css'
+import styleTextMigrationBanner from 'data-text:~/components/MigrationBanner.module.css'
 import styleTextRecipientList from 'data-text:~/components/RecipientList.module.css'
 import styleTextReloadButton from 'data-text:~/components/ReloadButton.module.css'
 import styleTextSocialMediaIcon from 'data-text:~/components/SocialMediaIcon.module.css'
@@ -15,6 +16,7 @@ export const getContentStyle = (): HTMLStyleElement => {
         styleTextContent,
         styleTextRecipientList,
         styleTextDeliveryView,
+        styleTextMigrationBanner,
         styleTextReloadButton,
         styleTextSocialMediaIcon,
         styleTextSubmitButton,

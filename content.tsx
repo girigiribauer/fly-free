@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { ComposerHeader } from '~/components/ComposerHeader'
 import { DeliveryView } from '~/components/DeliveryView'
+import { MigrationBanner } from '~/components/MigrationBanner'
 import { useDraftScanner } from '~/hooks/orchestrator/useDraftScanner'
 import { useReplaceTitle } from '~/hooks/useReplaceTitle'
 import { useWindowControl } from '~/hooks/useWindowControl'
@@ -54,6 +55,11 @@ const Overlay = () => {
   // Use new window control hook (handles resize and closing)
   const { handleClose } = useWindowControl()
 
+  // Only show the migration banner while composing (the DeliveryView panel
+  // takes over the whole window once posting starts).
+  const isBeforePost =
+    delivery.type === 'Initial' || delivery.type === 'Writing'
+
   return (
     <>
       <ComposerHeader
@@ -74,6 +80,7 @@ const Overlay = () => {
         handleClose={handleClose}
         dryRun={dryRun}
       />
+      {isBeforePost ? <MigrationBanner /> : null}
     </>
   )
 }

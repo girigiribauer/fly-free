@@ -1,0 +1,35 @@
+.banner {
+  position: fixed;
+  right: 16px;
+  bottom: 14px;
+  z-index: 15;
+  height: 35px;
+  box-sizing: border-box;
+  padding: 0 18px;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  background: #ec4765;
+  border-radius: 17.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  text-decoration: none;
+  font-family: sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  white-space: nowrap;
+  color: #fff;
+}
+
+.banner:hover {
+  opacity: 0.9;
+}
+
+.label {
+  color: #fff;
+}
+
+.arrow {
+  display: block;
+  flex: 0 0 auto;
+}

@@ -82,5 +82,17 @@
     },
     "maintenanceNote": {
         "message": "The developer no longer uses X (Twitter), so no new features are planned.\nMajor updates, such as migrating from App Passwords to OAuth, are also unlikely to be implemented.\n\nThank you for your understanding."
+    },
+    "migrationBanner": {
+        "message": "Please switch to the successor"
+    },
+    "migrationNote": {
+        "message": "FlyFree will no longer be updated or fixed. Please switch to the new version, FlyFree Glide.\nYou can still crosspost to X just like before, and you can enjoy new features too!"
+    },
+    "glideChrome": {
+        "message": "Get it for Chrome"
+    },
+    "glideFirefox": {
+        "message": "Get it for Firefox"
     }
 }

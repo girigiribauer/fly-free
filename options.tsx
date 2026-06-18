@@ -1,3 +1,5 @@
+import badgeChrome from 'data-base64:~/assets/badge-chrome.svg'
+import badgeFirefox from 'data-base64:~/assets/badge-firefox.svg'
 import { useCallback, useRef } from 'react'
 
 import { SocialMediaIcon } from '~/components/SocialMediaIcon'
@@ -38,6 +40,33 @@ const Options = () => {
         <img src="/assets/icon.png" alt="FlyFree" width="40" height="40" />
         <span>{chrome.i18n.getMessage('optionsTitle')}</span>
       </h1>
+
+      <section className={style.migration}>
+        <p className={style.migrationNote}>
+          {chrome.i18n.getMessage('migrationNote')}
+        </p>
+        <div className={style.migrationButtons}>
+          <a
+            className={style.migrationBadge}
+            href="https://chromewebstore.google.com/detail/flyfree-glide/eoammejlidnlmacclckjoaakpconfpal"
+            target="_blank">
+            <img
+              src={badgeChrome}
+              alt={chrome.i18n.getMessage('glideChrome')}
+            />
+          </a>
+          <a
+            className={style.migrationBadge}
+            href="https://addons.mozilla.org/firefox/addon/flyfree-glide/"
+            target="_blank">
+            <img
+              src={badgeFirefox}
+              alt={chrome.i18n.getMessage('glideFirefox')}
+            />
+          </a>
+        </div>
+      </section>
+
       <p className={style.textBlock}>
         {chrome.i18n.getMessage('description')}
       </p>
@@ -191,10 +220,6 @@ const Options = () => {
           </ul>
         </div>
       </div>
-
-      <p className={style.textBlock}>
-        {chrome.i18n.getMessage('maintenanceNote')}
-      </p>
 
       <span ref={updatedRef} className={style.updatedFeedback}>
         updated!
